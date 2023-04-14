@@ -37,9 +37,9 @@ public class incList {
 
     public void printList1() {
         Node current = head;
-        System.out.print("Lista vacias: ");
+        
         while (current != null) {
-            System.out.print("(" + current.i + "," + current.j + ")");
+            
             current = current.next;
             if (current != null) {
                 System.out.print(" -> ");

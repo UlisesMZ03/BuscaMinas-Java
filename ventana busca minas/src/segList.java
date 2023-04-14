@@ -1,3 +1,6 @@
+
+import java.util.Random;
+
 public class segList {
     Node head;
     int size;
@@ -44,4 +47,47 @@ public class segList {
     public int getSize() {
         return size;
     }
+    public boolean contains(int i, int j) {
+        Node current = head;
+
+        while (current != null) {
+            if (current.i == i && current.j == j) {
+                return true;
+            }
+            current = current.next;
+        }
+
+        return false;
+    }
+ public Node removeFNode() {
+    if (head == null) {
+        return null;
+    }
+    Node removedNode = head;
+    head = head.next;
+    size--;
+    return removedNode;
+}
+ public void removeNode(int i, int j) {
+    Node current = head;
+    Node previous = null;
+
+    while (current != null) {
+        if (current.i == i && current.j == j) {
+            if (previous == null) {
+                // Si el nodo a eliminar es el primero de la lista
+                head = current.next;
+            } else {
+                // Si el nodo a eliminar está en medio o al final de la lista
+                previous.next = current.next;
+            }
+            size--;
+            return; // Se encontró y eliminó el nodo
+        }
+        previous = current;
+        current = current.next;
+    }
+}
+
+   
 }

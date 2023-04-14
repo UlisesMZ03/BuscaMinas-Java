@@ -1,19 +1,19 @@
 
 import java.util.Random;
-import java.util.Scanner;
+
 
 public class Buscaminas {
 
     private final int nFilas = 8;
     private final int nColumnas = 8;
-    private final int nMinas = 3;
+    private final int nMinas = 6;
 
     int[][] tablero = new int[nFilas][nColumnas];
     boolean[][] visible = new boolean[nFilas][nColumnas];
     int[][] tableroVisible = new int[nFilas][nColumnas];
 
     boolean juegoTerminado = false;
-    private Scanner scanner = new Scanner(System.in);
+    
     minaList listaMina;
     segList listaSeg;
 incList listaInc;
@@ -262,7 +262,7 @@ incList listaInc;
         }
     }
 
-    private boolean haGanado() {
+    boolean haGanado() {
         for (int i = 0; i < nFilas; i++) {
             for (int j = 0; j < nColumnas; j++) {
                 if (!visible[i][j] && tablero[i][j] != 9) {
@@ -271,21 +271,5 @@ incList listaInc;
             }
         }
         return true;
-    }
-
-    public void jugar() {
-        System.out.println("¡Bienvenido al Buscaminas!");
-        while (!juegoTerminado) {
-            mostrarTablero();
-            System.out.println("Ingresa la fila y columna separadas por un espacio (ejemplo: 2 3):");
-            int fila = scanner.nextInt();
-            int columna = scanner.nextInt();
-            if (fila >= 0 && fila < nFilas && columna >= 0 && columna < nColumnas) {
-                descubrirCasilla(fila, columna);
-            } else {
-                System.out.println("La fila y columna deben ser números entre 0 y 7.");
-            }
-        }
-        scanner.close();
     }
 }
