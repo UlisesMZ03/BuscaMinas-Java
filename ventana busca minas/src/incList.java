@@ -37,9 +37,9 @@ public class incList {
 
     public void printList1() {
         Node current = head;
-        
+        System.out.print("Lista Inc: ");
         while (current != null) {
-            
+            System.out.print("(" + current.i + "," + current.j + ")");
             current = current.next;
             if (current != null) {
                 System.out.print(" -> ");
@@ -50,6 +50,18 @@ public class incList {
 
     public int getSize() {
         return size;
+    }
+    public boolean contains(int i, int j) {
+        Node current = head;
+
+        while (current != null) {
+            if (current.i == i && current.j == j) {
+                return true;
+            }
+            current = current.next;
+        }
+
+        return false;
     }
     
 Node removeNode() {
@@ -80,12 +92,31 @@ Node removeNode() {
         temp = current;
         previous.next = current.next;
         size--;
-        System.out.println("Nodo eliminado"+temp.i+","+temp.j);
+        System.out.println("Nodo eliminado inc"+temp.i+","+temp.j);
         return temp;
         
     }
 
     return temp;
 }
-}
 
+public void removeNode2(int i, int j) {
+    Node current = head;
+    Node previous = null;
+
+    while (current != null) {
+        if (current.i == i && current.j == j) {
+            if (previous == null) {
+                // Si el nodo a eliminar es el primero de la lista
+                head = current.next;
+            } else {
+                // Si el nodo a eliminar está en medio o al final de la lista
+                previous.next = current.next;
+            }
+            size--;
+            return; // Se encontró y eliminó el nodo
+        }
+        previous = current;
+        current = current.next;
+    }
+}}

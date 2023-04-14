@@ -41,7 +41,8 @@ public class GameMenuDemo extends Application {
         root.setPrefSize(400, 400);
 
         //InputStream is = Files.newInputStream(Paths.get(""));
-        Image img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/fondoMenu.png");
+        
+        Image img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas-Java/ventana busca minas/src/fondoMenu.png");
         //is.close();
 
         ImageView imgView = new ImageView(img);
@@ -96,10 +97,11 @@ public class GameMenuDemo extends Application {
             MenuButton btnResume = new MenuButton("TUTORIAL");
             btnResume.setOnMouseClicked(event -> {
                 if (buscaminas == null) {
-                    buscaminas = new BuscaminasFX();
+                    buscaminas = new BuscaminasFX(2);
                 }
                 buscaminas.start(new Stage());
                 primaryStage.close();
+                
                 gameMenu.setVisible(false);
             });
 
@@ -143,20 +145,36 @@ public class GameMenuDemo extends Application {
                     getChildren().remove(menu1);
                 });
             });
-
-            MenuButton btnSound = new MenuButton("Dummy");
-            MenuButton btnVideo = new MenuButton("Advance");
-            btnVideo.setOnMouseClicked(event -> {
+MenuButton btnSingle = new MenuButton("Single Player");
+            MenuButton btnDummy = new MenuButton("Dummy AI");
+            MenuButton btnAdvance = new MenuButton("Advance AI");
+            btnDummy.setOnMouseClicked(event -> {
                 if (buscaminas == null) {
-                    buscaminas = new BuscaminasFX();
+                    buscaminas = new BuscaminasFX(2);
+                }
+                buscaminas.start(new Stage());
+                primaryStage.close();
+                gameMenu.setVisible(false);
+            });
+            btnSingle.setOnMouseClicked(event -> {
+                if (buscaminas == null) {
+                    buscaminas = new BuscaminasFX(1);
+                }
+                buscaminas.start(new Stage());
+                primaryStage.close();
+                gameMenu.setVisible(false);
+            });
+            btnAdvance.setOnMouseClicked(event -> {
+                if (buscaminas == null) {
+                    buscaminas = new BuscaminasFX(3);
                 }
                 buscaminas.start(new Stage());
                 primaryStage.close();
                 gameMenu.setVisible(false);
             });
 
-            menu0.getChildren().addAll(btnResume, btnOptions, btnExit);
-            menu1.getChildren().addAll(btnBack, btnSound, btnVideo);
+            menu0.getChildren().addAll(btnOptions, btnResume, btnExit);
+            menu1.getChildren().addAll(btnBack,btnSingle, btnDummy, btnAdvance);
 
             Rectangle bg = new Rectangle(800, 600);
             bg.setFill(Color.GREY);

@@ -2,9 +2,7 @@
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.animation.FadeTransition;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -45,9 +43,7 @@ public class BuscaminasFX extends Application {
     private int turno = 1;
     boolean azul = false;
     private Pane pane = new Pane();
-    //private int banderas = 0;
 
-    Font font = Font.font("Arial", FontWeight.BOLD, 14);
     DropShadow shadow = new DropShadow(5, Color.BLACK);
 
     private int contadorTurno = 0;
@@ -58,6 +54,11 @@ public class BuscaminasFX extends Application {
     BackgroundImage backgroundCasilla = new BackgroundImage(casillaB, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
 
     Background backgroundC = new Background(backgroundCasilla);
+    private int cantJug;
+
+    public BuscaminasFX(int cantJug) {
+        this.cantJug = cantJug;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -102,7 +103,7 @@ public class BuscaminasFX extends Application {
 
                     System.out.println("Turno1");
                     if (buscaminas.listaSeg.getSize() > 0) {
-                        System.out.println("Hola");
+                       
                         Node temp = buscaminas.listaSeg.head;
                         buscaminas.listaSeg.removeFNode();
 
@@ -152,8 +153,8 @@ public class BuscaminasFX extends Application {
 
                     int fila = GridPane.getRowIndex(casilla);
                     int columna = GridPane.getColumnIndex(casilla);
-
-                    if (turno == 1) {
+                    if (cantJug==1){
+                        if (turno == 1) {
                         if (event.getButton() == MouseButton.SECONDARY) {
                             if (banderas[fila][columna]) {
                                 banderas[fila][columna] = false;
@@ -178,6 +179,46 @@ public class BuscaminasFX extends Application {
 
                                     }
                                     buscaminas.descubrirCasilla(fila, columna);
+                                    turno = 1;
+                                    if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+
+                                        System.out.println("Jugador gano");
+                                    } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
+                                        System.out.println("Jugador perdio");
+                                    }
+                                }
+                            }
+                        }
+                    }}
+                    else if(cantJug==3){
+                        
+                    
+                    if (turno == 1) {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            if (banderas[fila][columna]) {
+                                banderas[fila][columna] = false;
+                            } else {
+                                System.out.println("Bandera agregada" + columna + "," + fila);
+                                // Agregar la casilla al arreglo banderas
+                                banderas[fila][columna] = true;
+                            }
+
+                        }
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            
+                            {
+                                if (buscaminas.tableroVisible[fila][columna] == 8) {
+                                    if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
+                                        bonus.setBackground(backgroundG);
+                                    }
+                                    if (contadorTurno < 2) {
+                                        bonus.setBackground(backgroundR);
+                                    }
+                                    if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
+                                        buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
+
+                                    }
+                                    buscaminas.descubrirCasilla(fila, columna);
                                     turno = 2;
                                     if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
 
@@ -189,6 +230,7 @@ public class BuscaminasFX extends Application {
                             }
                         }
                     } else {
+
                         if (contadorTurno >= 0) {
                             contadorTurno++;
                             //System.out.println(contadorTurno);
@@ -212,7 +254,7 @@ public class BuscaminasFX extends Application {
                                 System.out.println("Bot perdio");
                             }
                         } else {
-                            buscaminas.agregarListInc(fila, columna);
+                            
                             Node temp = buscaminas.listaInc.removeNode();
 
                             buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
@@ -227,6 +269,66 @@ public class BuscaminasFX extends Application {
 
                         turno = 1;
 
+                    }}
+                    
+                    else if(cantJug==2){
+                        
+                    
+                    if (turno == 1) {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            
+                            if (banderas[fila][columna]) {
+                                banderas[fila][columna] = false;
+                            } else {
+                                System.out.println("Bandera agregada" + columna + "," + fila);
+                                // Agregar la casilla al arreglo banderas
+                                banderas[fila][columna] = true;
+                            }
+
+                        }
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            buscaminas.listaInc.clear();
+                            {
+                                if (buscaminas.tableroVisible[fila][columna] == 8) {
+                                    if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
+                                        bonus.setBackground(backgroundG);
+                                    }
+                                    if (contadorTurno < 2) {
+                                        bonus.setBackground(backgroundR);
+                                    }
+                                    if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
+                                        buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
+
+                                    }
+                                    buscaminas.descubrirCasilla(fila, columna);
+                                    turno = 2;
+                                    if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+
+                                        System.out.println("Jugador gano");
+                                    } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
+                                        System.out.println("Jugador perdio");
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                         else {
+                            
+                            Node temp = buscaminas.listaInc.removeNode();
+
+                            buscaminas.descubrirCasilla(temp.j-1, temp.i-1);
+                           
+                            if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+
+                                System.out.println("Bot gano");
+                            } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
+                                System.out.println("Bot perdio");
+                            }
+                            turno = 1;
+                        }
+
+                        
+
                     }
 
                     mostrarTablero();
@@ -234,6 +336,11 @@ public class BuscaminasFX extends Application {
                     //System.out.println(buscaminas.casillasVacias(fila,columna));
                     buscaminas.casillaMina(fila, columna);
                     buscaminas.casillaSeg(fila, columna);
+                    buscaminas.agregarListInc(fila, columna);
+                    //buscaminas.casillaPorcentaje(fila, columna);
+                    buscaminas.casillaSeg2(fila, columna);
+                    //buscaminas.agregarListInc(fila, columna);
+                    //buscaminas.casillaNSeg(fila, columna);
 
                     //System.out.println("Minasssss:   "+buscaminas.nMinas(fila, columna));
                     if (buscaminas.juegoTerminado) {
@@ -296,6 +403,7 @@ public class BuscaminasFX extends Application {
         for (int i = 0; i < nFilas; i++) {
             for (int j = 0; j < nColumnas; j++) {
                 Button casilla = casillas[i][j];
+                
                 if (!buscaminas.visible[i][j]) {
                     if (banderas[i][j]) {
                         casilla.setBackground(backgroundB);
@@ -361,6 +469,7 @@ public class BuscaminasFX extends Application {
 
                     }
                 } else {
+                    
                     casilla.setText("");
                 }
             }
@@ -370,9 +479,9 @@ public class BuscaminasFX extends Application {
     private void mostrarMensajeFinal() {
         detenerContador();
         Image casillaM = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/mina.png");
-    BackgroundImage backgroundMina = new BackgroundImage(casillaM, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
+        BackgroundImage backgroundMina = new BackgroundImage(casillaM, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
 
-    Background backgroundM = new Background(backgroundMina);
+        Background backgroundM = new Background(backgroundMina);
         for (int i = 0; i < nFilas; i++) {
             for (int j = 0; j < nColumnas; j++) {
                 Button casilla = casillas[i][j];
@@ -386,9 +495,4 @@ public class BuscaminasFX extends Application {
         }
     }
 
-   
-
-     public static void main(String[] args) {
-        launch(args);
-    }
 }

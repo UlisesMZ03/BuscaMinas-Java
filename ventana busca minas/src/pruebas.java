@@ -7,6 +7,12 @@
  *
  * @author ulise
  */
-public class control {
-    
+public class pruebas {
+
+    public static void main(String[] args) {
+        int num1 = 1;
+        int num2 = 3;
+        double resultado =(double) num1 /  num2;
+        System.out.println("La división es: " + resultado);
+    }
 }

@@ -1,6 +1,7 @@
 
+import static java.lang.Integer.min;
 import java.util.Random;
-
+import java.util.Scanner;
 
 public class Buscaminas {
 
@@ -13,10 +14,11 @@ public class Buscaminas {
     int[][] tableroVisible = new int[nFilas][nColumnas];
 
     boolean juegoTerminado = false;
-    
+    private Scanner scanner = new Scanner(System.in);
     minaList listaMina;
     segList listaSeg;
     incList listaInc;
+    segList listaSeg2;
 
     public Buscaminas() {
         inicializarTablero();
@@ -24,6 +26,7 @@ public class Buscaminas {
         listaMina = new minaList();
         listaSeg = new segList();
         listaInc = new incList();
+        listaSeg2 = new segList();
     }
 
     private void inicializarTablero() {
@@ -129,6 +132,50 @@ public class Buscaminas {
         }
     }
 
+    void casillaNSeg(int fila, int columna) {
+        for (fila = 0; fila < nFilas; fila++) {
+
+            for (columna = 0; columna < nFilas; columna++) {
+                if (visible[fila][columna]) {
+                    if ((cantVacias(fila, columna) - nMinas(fila, columna) == 0)) {
+                        System.out.println("Prob:" + 0);
+                    } else {
+                        System.out.println("Prob" + (tableroVisible[fila][columna] / (cantVacias(fila, columna) - nMinas(fila, columna))));
+
+                    }
+                }
+            }
+        }
+    }
+
+    
+    
+    void casillaSeg2(int fila, int columna) {
+        for (fila = 0; fila < nFilas; fila++) {
+
+            for (columna = 0; columna < nFilas; columna++) {
+
+                if ((nMinas(fila, columna) < tableroVisible[fila][columna]) && tableroVisible[fila][columna]!=8) {
+
+                    for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
+
+                        for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
+                            if (!listaMina.contains(j + 1, i + 1) && tableroVisible[i][j] == 8) {
+                                int nume = tableroVisible[fila][columna]-nMinas(fila,columna);
+                                int deno = casillasVacias(fila, columna);
+                                double prob = (double) nume/deno;
+                                System.out.println("Incertidumbre: "+ (prob)+"en: "+(j+1)+","+(i+1));
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    
+    
     void casillaSeg(int fila, int columna) {
         for (fila = 0; fila < nFilas; fila++) {
 
@@ -155,26 +202,20 @@ public class Buscaminas {
         }
     }
 
-    int cantMina(int fila, int columna) {
-        int cantMina = 0;
+    int cantVacias(int fila, int columna) {
+        int cantVacias = 0;
+        if (tableroVisible[fila][columna] == 8) {
+            for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
+                for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
+                    if (tableroVisible[i][j] == 8) {
 
-        if (casillasVacias(fila, columna) == tableroVisible[fila][columna]) {
-            if (tableroVisible[fila][columna] != 8 && tableroVisible[fila][columna] > 0) {
-
-                for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
-                    for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
-
-                        if (tableroVisible[i][j] == 8) {
-                            cantMina++;
-
-                        }
+                        cantVacias++;
                     }
                 }
             }
+            return cantVacias;
         }
-
-        return cantMina;
-
+        return 0;
     }
 
     int nMinas(int fila, int columna) {
@@ -194,6 +235,21 @@ public class Buscaminas {
         return 0;
     }
 
+    int nMinasG(int fila, int columna) {
+        int nMinas = 0;
+
+        for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
+            for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
+                if (tableroVisible[i][j] == 8 && listaMina.contains(j + 1, i + 1)) {
+                    nMinas++;
+                    //System.out.println(nMinas);
+                }
+            }
+        }
+        return nMinas;
+
+    }
+
     void agregarListInc(int fila, int columna) {
         for (fila = 0; fila < nFilas; fila++) {
 
@@ -201,7 +257,58 @@ public class Buscaminas {
                 if (tableroVisible[fila][columna] == 8) {
                     listaInc.addNode(columna + 1, fila + 1);
                     listaInc.printList1();
+
                 }
+//                if (listaInc.contains(columna+1, fila+1) && tableroVisible[columna][fila] < 8) {
+//                                listaInc.removeNode2(columna+1, fila+1);}
+//                                listaInc.printList1();
+            }
+        }
+    }
+
+    void casillaPorcentaje(int fila, int columna) {
+        double prob = 0;
+        for (fila = 0; fila < nFilas; fila++) {
+
+            for (columna = 0; columna < nFilas; columna++) {
+                int vacias = 0;
+
+                int minas = nMinasG(fila, columna);
+
+                if (tableroVisible[fila][columna] < 8) {
+                    for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
+
+                        for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
+                            if (tableroVisible[i][j] == 8 && minas>0){
+                                prob = (double) min((tableroVisible[fila][columna] - minas), 0) / min((cantVacias(fila, columna) - minas),0);
+
+                                System.out.println("La prob hiles:" + prob + "en: " + (j+1) + "," + (i+1));
+                            }
+                            if (tableroVisible[i][j] == 8 && minas==0){
+                                prob = (double) min((tableroVisible[fila][columna]), 0) / min((cantVacias(fila, columna)),0);
+                                System.out.println("La prob hiles:" + prob + "en: " + (j+1) + "," + (i+1));
+                            }
+                            
+                        }
+
+                        
+
+//System.out.println("incertidumbre de la casilla"+columna+","+fila+"="+());
+                    }
+                }
+
+            }
+        }
+    }
+
+    void eliminarListInc(int fila, int columna) {
+        for (fila = 0; fila < nFilas; fila++) {
+
+            for (columna = 0; columna < nFilas; columna++) {
+
+//                if (listaInc.contains(columna+1, fila+1) && tableroVisible[columna][fila] < 8) {
+//                                listaInc.removeNode2(columna, fila);}
+//                                listaInc.printList1();
             }
         }
     }
@@ -234,7 +341,6 @@ public class Buscaminas {
             for (columna = 0; columna < nFilas; columna++) {
                 if (casillasVacias(fila, columna) == tableroVisible[fila][columna]) {
                     if (tableroVisible[fila][columna] != 8 && tableroVisible[fila][columna] > 0) {
-                        //System.out.println(tableroVisible[fila][columna]);
                         for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
                             for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
 
@@ -276,4 +382,19 @@ public class Buscaminas {
         return true;
     }
 
+    public void jugar() {
+        System.out.println("¡Bienvenido al Buscaminas!");
+        while (!juegoTerminado) {
+            mostrarTablero();
+            System.out.println("Ingresa la fila y columna separadas por un espacio (ejemplo: 2 3):");
+            int fila = scanner.nextInt();
+            int columna = scanner.nextInt();
+            if (fila >= 0 && fila < nFilas && columna >= 0 && columna < nColumnas) {
+                descubrirCasilla(fila, columna);
+            } else {
+                System.out.println("La fila y columna deben ser números entre 0 y 7.");
+            }
+        }
+        scanner.close();
+    }
 }
