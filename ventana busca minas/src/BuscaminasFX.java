@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -15,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -29,6 +31,7 @@ import javafx.scene.text.Font;
 import static javafx.scene.text.Font.font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class BuscaminasFX extends Application {
 
@@ -37,27 +40,34 @@ public class BuscaminasFX extends Application {
     private Label labelSegundos = new Label("0");
     Rectangle rect = new Rectangle(40, 40);
     private Button[][] casillas = new Button[nFilas][nColumnas];
+    private boolean[][] banderas = new boolean[nFilas][nColumnas];
     private Buscaminas buscaminas = new Buscaminas();
     private int turno = 1;
     boolean azul = false;
     private Pane pane = new Pane();
-    private int banderas = 0;
+    //private int banderas = 0;
 
     Font font = Font.font("Arial", FontWeight.BOLD, 14);
-    DropShadow shadow = new DropShadow(10, Color.BLACK);
+    DropShadow shadow = new DropShadow(5, Color.BLACK);
 
     private int contadorTurno = 0;
     private int segundos = 0;
     private Timer timer;
 
+    Image casillaB = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/casilla.png");
+    BackgroundImage backgroundCasilla = new BackgroundImage(casillaB, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
+
+    Background backgroundC = new Background(backgroundCasilla);
+
     @Override
     public void start(Stage primaryStage) {
+
         iniciarContador();
         // Pane pane = new Pane();
         GridPane root = new GridPane();
         pane.getChildren().add(root);
         root.setTranslateX(40);
-        root.setTranslateY(60);
+        root.setTranslateY(63);
         labelSegundos.setLayoutX(67);
         labelSegundos.setLayoutY(10);
 
@@ -69,11 +79,13 @@ public class BuscaminasFX extends Application {
 
         Image bonusRed = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/bonusRed.png");
         Image bonusGreen = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/bonusGreen.png");
+        //BackgroundImage backgroundBandera = new BackgroundImage(bandera, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(1.0, 1.0, true, true, false, false));
 
         BackgroundImage backgroundBonusR = new BackgroundImage(bonusRed, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(1.0, 1.0, true, true, false, false));
         BackgroundImage backgroundBonusG = new BackgroundImage(bonusGreen, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(1.0, 1.0, true, true, false, false));
         Background backgroundR = new Background(backgroundBonusR);
         Background backgroundG = new Background(backgroundBonusG);
+
         bonus.setBackground(backgroundR);
         bonus.setEffect(shadow);
 
@@ -83,11 +95,11 @@ public class BuscaminasFX extends Application {
             @Override
             public void handle(ActionEvent e) {
                 if (contadorTurno >= 2) {
-                    
+
                     bonus.setEffect(shadow);
                 }
                 if (turno == 1 && contadorTurno >= 2) {
-                    
+
                     System.out.println("Turno1");
                     if (buscaminas.listaSeg.getSize() > 0) {
                         System.out.println("Hola");
@@ -98,14 +110,13 @@ public class BuscaminasFX extends Application {
                         mostrarTablero();
                         turno = 2;
                         contadorTurno -= 2;
-                        if(contadorTurno>=2){
+                        if (contadorTurno >= 2) {
                             bonus.setBackground(backgroundG);
-                        }
-                        else if (contadorTurno<2){
+                        } else if (contadorTurno < 2) {
                             bonus.setBackground(backgroundR);
-                            
+
                         }
-                        
+
                     } else {
                         bonus.setBackground(backgroundR);
                         System.out.println("Lista seg vacia");
@@ -137,33 +148,46 @@ public class BuscaminasFX extends Application {
 
                 // Agregar la variable booleana azul
 // Agregar el controlador del evento MouseEvent.MOUSE_PRESSED
-                casilla.setOnAction(event -> {
+                casilla.setOnMouseClicked(event -> {
 
                     int fila = GridPane.getRowIndex(casilla);
                     int columna = GridPane.getColumnIndex(casilla);
-                    if (turno == 1 ) {
-                        if (buscaminas.tableroVisible[fila][columna]==8){
-                            if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
-                            bonus.setBackground(backgroundG);
-                        }
-                        if (contadorTurno < 2) {
-                            bonus.setBackground(backgroundR);
-                        }
-                        if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
-                            buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
+
+                    if (turno == 1) {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            if (banderas[fila][columna]) {
+                                banderas[fila][columna] = false;
+                            } else {
+                                System.out.println("Bandera agregada" + columna + "," + fila);
+                                // Agregar la casilla al arreglo banderas
+                                banderas[fila][columna] = true;
+                            }
 
                         }
-                        buscaminas.descubrirCasilla(fila, columna);
-                        turno = 2;
-                        if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            {
+                                if (buscaminas.tableroVisible[fila][columna] == 8) {
+                                    if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
+                                        bonus.setBackground(backgroundG);
+                                    }
+                                    if (contadorTurno < 2) {
+                                        bonus.setBackground(backgroundR);
+                                    }
+                                    if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
+                                        buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
-                            System.out.println("Jugador gano");
-                        } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
-                            System.out.println("Jugador perdio");
+                                    }
+                                    buscaminas.descubrirCasilla(fila, columna);
+                                    turno = 2;
+                                    if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+
+                                        System.out.println("Jugador gano");
+                                    } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
+                                        System.out.println("Jugador perdio");
+                                    }
+                                }
+                            }
                         }
-                        }
-                        
-                        
                     } else {
                         if (contadorTurno >= 0) {
                             contadorTurno++;
@@ -175,7 +199,6 @@ public class BuscaminasFX extends Application {
                         if (contadorTurno < 2) {
                             bonus.setBackground(backgroundR);
                         }
-                        
 
                         if (buscaminas.listaSeg.getSize() > 0) {
                             Node temp = buscaminas.listaSeg.head;
@@ -217,10 +240,12 @@ public class BuscaminasFX extends Application {
                         mostrarMensajeFinal();
                     }
                 });
+
                 casilla.setShape(rect);
                 casilla.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
                 //casilla.setEffect(new DropShadow());
                 casilla.setEffect(shadow);
+                casilla.setBackground(backgroundC);
                 root.add(casilla, j, i);
                 casillas[i][j] = casilla;
 
@@ -263,12 +288,27 @@ public class BuscaminasFX extends Application {
     }
 
     private void mostrarTablero() {
+        Image bandera = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/bandera.png");
+        BackgroundImage backgroundBandera = new BackgroundImage(bandera, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
+
+        Background backgroundB = new Background(backgroundBandera);
+
         for (int i = 0; i < nFilas; i++) {
             for (int j = 0; j < nColumnas; j++) {
                 Button casilla = casillas[i][j];
+                if (!buscaminas.visible[i][j]) {
+                    if (banderas[i][j]) {
+                        casilla.setBackground(backgroundB);
+                        //casilla.setStyle("-fx-background-color: 	Blue;-fx-border-color: black; -fx-border-width: 1px;");
+                    } else {
+                        casilla.setBackground(backgroundC);
+                        casilla.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
+
+                    }
+                }
                 if (buscaminas.visible[i][j]) {
                     if (buscaminas.tablero[i][j] == 0) {
-                        casilla.setEffect(new InnerShadow());
+                        //casilla.setEffect(new InnerShadow());
 
                         casilla.setStyle("-fx-background-color: 	DARKGRAY;-fx-border-color: black; -fx-border-width: 1px;");
                     } else if (buscaminas.tablero[i][j] == 9) {
@@ -328,12 +368,17 @@ public class BuscaminasFX extends Application {
     }
 
     private void mostrarMensajeFinal() {
+        detenerContador();
+        Image casillaM = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/mina.png");
+    BackgroundImage backgroundMina = new BackgroundImage(casillaM, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
+
+    Background backgroundM = new Background(backgroundMina);
         for (int i = 0; i < nFilas; i++) {
             for (int j = 0; j < nColumnas; j++) {
                 Button casilla = casillas[i][j];
                 casilla.setDisable(true);
                 if (buscaminas.tablero[i][j] == 9) {
-                    casilla.setText("X");
+                    casilla.setBackground(backgroundM);
                 } else {
                     casilla.setText(Integer.toString(buscaminas.tablero[i][j]));
                 }
@@ -341,7 +386,9 @@ public class BuscaminasFX extends Application {
         }
     }
 
-    public static void main(String[] args) {
+   
+
+     public static void main(String[] args) {
         launch(args);
     }
 }

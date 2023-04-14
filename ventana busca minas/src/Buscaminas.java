@@ -13,16 +13,17 @@ public class Buscaminas {
     int[][] tableroVisible = new int[nFilas][nColumnas];
 
     boolean juegoTerminado = false;
-   
+    
     minaList listaMina;
     segList listaSeg;
-incList listaInc;
+    incList listaInc;
+
     public Buscaminas() {
         inicializarTablero();
         colocarMinas();
         listaMina = new minaList();
         listaSeg = new segList();
-        listaInc=new incList();
+        listaInc = new incList();
     }
 
     private void inicializarTablero() {
@@ -114,17 +115,17 @@ incList listaInc;
         visible[fila][columna] = true;
         if (tablero[fila][columna] == 9) {
             juegoTerminado = true;
-            
+
         } else if (tablero[fila][columna] == 0) {
             tableroVisible[fila][columna] = 0;
 
             descubrirCasillasAdyacentes(fila, columna);
-            
+
         }
 
         if (!juegoTerminado && haGanado()) {
             juegoTerminado = true;
-            
+
         }
     }
 
@@ -142,8 +143,8 @@ incList listaInc;
                                 listaSeg.addNode(j + 1, i + 1);
                                 listaSeg.printList1();
                             }
-                            if (listaSeg.contains(j+1, i+1)&& tableroVisible[i][j]<8){
-                                listaSeg.removeNode(j+1, i+1);
+                            if (listaSeg.contains(j + 1, i + 1) && tableroVisible[i][j] < 8) {
+                                listaSeg.removeNode(j + 1, i + 1);
                             }
 
                         }
@@ -193,25 +194,26 @@ incList listaInc;
         return 0;
     }
 
-    void agregarListInc(int fila,int columna){
+    void agregarListInc(int fila, int columna) {
         for (fila = 0; fila < nFilas; fila++) {
 
             for (columna = 0; columna < nFilas; columna++) {
-                if (tableroVisible[fila][columna]==8){
-                    listaInc.addNode(columna+1, fila+1);
+                if (tableroVisible[fila][columna] == 8) {
+                    listaInc.addNode(columna + 1, fila + 1);
                     listaInc.printList1();
                 }
             }
-    }}
-    
+        }
+    }
+
     int casillasVacias(int fila, int columna) {
         int cantVacias = 0;
         if (tableroVisible[fila][columna] != 8 && tableroVisible[fila][columna] > 0) {
             for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
                 for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
                     if (tableroVisible[i][j] == 8) {
-                        listaInc.addNode(j+1, i+1);
-                        
+                        listaInc.addNode(j + 1, i + 1);
+
                         cantVacias++;
                     }
                 }
@@ -224,8 +226,6 @@ incList listaInc;
     void esMina() {
 
     }
-
-    
 
     void casillaMina(int fila, int columna) {
 
