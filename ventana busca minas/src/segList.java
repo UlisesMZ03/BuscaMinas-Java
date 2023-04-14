@@ -88,6 +88,9 @@ public class segList {
         current = current.next;
     }
 }
-
+public void clear() {
+    head = null;
+    size = 0;
+}
    
 }

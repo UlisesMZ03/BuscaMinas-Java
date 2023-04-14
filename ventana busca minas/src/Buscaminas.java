@@ -6,14 +6,14 @@ public class Buscaminas {
 
     private final int nFilas = 8;
     private final int nColumnas = 8;
-    private final int nMinas = 6;
+    private final int nMinas = 3;
 
     int[][] tablero = new int[nFilas][nColumnas];
     boolean[][] visible = new boolean[nFilas][nColumnas];
     int[][] tableroVisible = new int[nFilas][nColumnas];
 
     boolean juegoTerminado = false;
-    
+   
     minaList listaMina;
     segList listaSeg;
 incList listaInc;
@@ -87,22 +87,22 @@ incList listaInc;
 
                         //tableroVisible[i][j]=0;
                         //System.out.print(tableroVisible[i][j]);
-                        //System.out.print(tableroVisible[i][j]);
+                        System.out.print(tableroVisible[i][j]);
                     } else if (tablero[i][j] == 9) {
                         System.out.print("X");
                     } else {
                         //tableroVisible[i][j] = contarMinasAdyacentes(i,j);
                         //System.out.print(tablero[i][j]);
-                        //System.out.print(tableroVisible[i][j]);
+                        System.out.print(tableroVisible[i][j]);
 
                     }
                 } else {
                     tableroVisible[i][j] = 8;
-                    //System.out.print(tableroVisible[i][j]);
+                    System.out.print(tableroVisible[i][j]);
                 }
-                //System.out.print(" ");
+                System.out.print(" ");
             }
-            //System.out.println();
+            System.out.println();
         }
     }
 
@@ -114,7 +114,7 @@ incList listaInc;
         visible[fila][columna] = true;
         if (tablero[fila][columna] == 9) {
             juegoTerminado = true;
-            System.out.println("¡BOOM! ¡Has perdido!");
+            
         } else if (tablero[fila][columna] == 0) {
             tableroVisible[fila][columna] = 0;
 
@@ -124,7 +124,7 @@ incList listaInc;
 
         if (!juegoTerminado && haGanado()) {
             juegoTerminado = true;
-            System.out.println("¡Felicidades! ¡Has ganado!");
+            
         }
     }
 
@@ -141,6 +141,9 @@ incList listaInc;
                             if (!listaMina.contains(j + 1, i + 1) && tableroVisible[i][j] == 8) {
                                 listaSeg.addNode(j + 1, i + 1);
                                 listaSeg.printList1();
+                            }
+                            if (listaSeg.contains(j+1, i+1)&& tableroVisible[i][j]<8){
+                                listaSeg.removeNode(j+1, i+1);
                             }
 
                         }
@@ -272,4 +275,5 @@ incList listaInc;
         }
         return true;
     }
+
 }
