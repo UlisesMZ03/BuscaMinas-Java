@@ -1,4 +1,5 @@
 
+import java.util.List;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,6 +29,9 @@ public class BuscaminasFX extends Application {
                     int columna = GridPane.getColumnIndex(casilla);
                     buscaminas.descubrirCasilla(fila, columna);
                     mostrarTablero();
+                    buscaminas.mostrarTablero();
+                    List<int[]> casillasSeguras = buscaminas.casillasSeguras;
+                    System.out.println(casillasSeguras);
                     if (buscaminas.juegoTerminado) {
                         mostrarMensajeFinal();
                     }
@@ -51,6 +55,8 @@ public class BuscaminasFX extends Application {
                 Button casilla = casillas[i][j];
                 if (buscaminas.visible[i][j]) {
                     if (buscaminas.tablero[i][j] == 0) {
+                        buscaminas.encontrarCasillasSeguras();
+                        
                         casilla.setStyle("-fx-background-color: 	DARKGRAY;-fx-border-color: black; -fx-border-width: 1px;");
                     } else if (buscaminas.tablero[i][j] == 9) {
                         casilla.setText("X");
@@ -59,35 +65,36 @@ public class BuscaminasFX extends Application {
                         if (buscaminas.tablero[i][j] > 0) {
                             if (buscaminas.tablero[i][j] ==1){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: blue;-fx-border-color: black; -fx-border-width: 1px;");
-                            
+                                buscaminas.tableroVisible[i][j]=1;
                             }
                             if (buscaminas.tablero[i][j] ==2){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: LIMEGREEN;-fx-border-color: black; -fx-border-width: 1px;");
+                                buscaminas.tableroVisible[i][j]=2;
                             
                             }
                             if (buscaminas.tablero[i][j] ==3){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: red;-fx-border-color: black; -fx-border-width: 1px;");
-                            
+                                buscaminas.tableroVisible[i][j]=3;
                             }
                             if (buscaminas.tablero[i][j] ==4){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: red;-fx-border-color: black; -fx-border-width: 1px;");
-                            
+                                buscaminas.tableroVisible[i][j]=4;
                             }
                             if (buscaminas.tablero[i][j] ==5){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: red;-fx-border-color: black; -fx-border-width: 1px;");
-                            
+                                buscaminas.tableroVisible[i][j]=5;
                             }
                             if (buscaminas.tablero[i][j] ==6){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: red;-fx-border-color: black; -fx-border-width: 1px;");
-                            
+                                buscaminas.tableroVisible[i][j]=5;
                             }
                             if (buscaminas.tablero[i][j] ==7){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: red;-fx-border-color: black; -fx-border-width: 1px;");
-                            
+                                buscaminas.tableroVisible[i][j]=7;
                             }
                             if (buscaminas.tablero[i][j] ==8){
                                 casilla.setStyle("-fx-background-color: grey; -fx-text-fill: red;-fx-border-color: black; -fx-border-width: 1px;");
-                            
+                                buscaminas.tableroVisible[i][j]=8;
                             }
                         }
                         

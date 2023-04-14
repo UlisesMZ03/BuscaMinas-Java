@@ -1,6 +1,8 @@
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-
+import java.util.Scanner;
 
 public class Buscaminas {
 
@@ -10,9 +12,11 @@ public class Buscaminas {
 
     int[][] tablero = new int[nFilas][nColumnas];
     boolean[][] visible = new boolean[nFilas][nColumnas];
+    int[][] tableroVisible = new int[nFilas][nColumnas];
 
     boolean juegoTerminado = false;
-    
+    private Scanner scanner = new Scanner(System.in);
+    List<int[]> casillasSeguras = new ArrayList<>();
 
     public Buscaminas() {
         inicializarTablero();
@@ -66,24 +70,60 @@ public class Buscaminas {
         return nMinas;
     }
 
-    private void mostrarTablero() {
+
+
+    public void encontrarCasillasSeguras() {
+        for (int i = 0; i < nFilas; i++) {
+            for (int j = 0; j < nColumnas; j++) {
+                if (tableroVisible[i][j] != 0 && !visible[i][j]) {
+                    boolean casillaSegura = true;
+                    int nMinasAdyacentes = 0;
+                    int nCasillasAdyacentes = 0;
+                    for (int k = Math.max(i - 1, 0); k <= Math.min(i + 1, nFilas - 1) && casillaSegura; k++) {
+                        for (int l = Math.max(j - 1, 0); l <= Math.min(j + 1, nColumnas - 1) && casillaSegura; l++) {
+                            if (k != i || l != j) {
+                                if (!visible[k][l]) {
+                                    if (tablero[k][l] == 9) {
+                                        nMinasAdyacentes++;
+                                    } else {
+                                        nCasillasAdyacentes++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (nCasillasAdyacentes > 0 && nMinasAdyacentes == (tablero[i][j])) {
+                        casillasSeguras.add(new int[]{i, j});
+                        System.out.println(casillasSeguras);
+                    }
+                }
+            }
+        }
+    }
+
+    void mostrarTablero() {
         System.out.print("  ");
         for (int j = 0; j < nColumnas; j++) {
-            System.out.print(j + " ");
+            //System.out.print(j + " ");
         }
         System.out.println();
 
         for (int i = 0; i < nFilas; i++) {
-            System.out.print(i + " ");
+            //System.out.print(i + " ");
             for (int j = 0; j < nColumnas; j++) {
                 if (visible[i][j]) {
                     if (tablero[i][j] == 0) {
-                        System.out.print(" ");
+
+                        //tableroVisible[i][j]=0;
+                        System.out.print(tableroVisible[i][j]);
+                        //System.out.print(tableroVisible[i][j]);
 
                     } else if (tablero[i][j] == 9) {
                         System.out.print("X");
                     } else {
-                        System.out.print(tablero[i][j]);
+                        //tableroVisible[i][j] = contarMinasAdyacentes(i,j);
+                        //System.out.print(tablero[i][j]);
+                        System.out.print(tableroVisible[i][j]);
 
                     }
                 } else {
@@ -105,6 +145,8 @@ public class Buscaminas {
             juegoTerminado = true;
             System.out.println("¡BOOM! ¡Has perdido!");
         } else if (tablero[fila][columna] == 0) {
+            tableroVisible[fila][columna] = 0;
+
             descubrirCasillasAdyacentes(fila, columna);
         }
 
