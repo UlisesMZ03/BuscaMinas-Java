@@ -1,4 +1,6 @@
 
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.io.File;
 import java.util.Random;
 import java.util.Timer;
@@ -8,6 +10,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -24,6 +32,7 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -58,7 +67,7 @@ public class BuscaminasFX extends Application {
     private int resultadoF;
     private File file = new File("/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/sounds/pop.mp3");
     private Media media = new Media(file.toURI().toString());
-    
+
     private File fileError = new File("/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/sounds/error.mp3");
     private Media mediaError = new Media(fileError.toURI().toString());
     private Font pixelFontC = Font.loadFont("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/fonts/digital-7.ttf", 18);
@@ -70,6 +79,7 @@ public class BuscaminasFX extends Application {
     private Pane pane = new Pane();
     private int filaPuntero = 0;
     private int columnaPuntero = 0;
+    private int selecArd = 0;
     DropShadow shadow = new DropShadow(5, Color.BLACK);
     private Scene SceneInicial;
     private int contadorTurno = 0;
@@ -77,14 +87,19 @@ public class BuscaminasFX extends Application {
     private Timer timer;
     private MediaPlayer mediaPlayer;
     private Label labelVariable;
+    ScheduledExecutorService executorService ;
+    // KeyEvent keyPressEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.S, false, false, false, false);
     Image casillaB = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/casilla.png");
     BackgroundImage backgroundCasilla = new BackgroundImage(casillaB, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
-
+    ArduinoReceiver arduinoReceiver;
     Background backgroundC = new Background(backgroundCasilla);
     private int cantJug;
+    private boolean hiloTF = true;
+    private Thread thread;
 
     public BuscaminasFX(int cantJug) {
         this.cantJug = cantJug;
+        
     }
 
     @Override
@@ -95,10 +110,11 @@ public class BuscaminasFX extends Application {
 
         // Escuchar los cambios de la propiedad variableProperty
         labelControl = new Label();
-        ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
 
-        Thread thread = new Thread(() -> {
-            while (true) {
+        thread = new Thread(() -> {
+            arduinoReceiver = new ArduinoReceiver();
+            while (hiloTF) {
+
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -109,9 +125,13 @@ public class BuscaminasFX extends Application {
                     filaPuntero = arduinoReceiver.variableProperty().get();
 
                     columnaPuntero = arduinoReceiver.variable2XProperty().get();
+                    selecArd = arduinoReceiver.variableSProperty().get();
 
                 });
             }
+            arduinoReceiver.port.closePort();
+
+            System.out.println("HILO CERRADOOOooooooooooo");
         });
         thread.setDaemon(true);
         thread.start();
@@ -216,7 +236,15 @@ public class BuscaminasFX extends Application {
 
         for (int i = 0; i < nFilas; i++) {
             for (int j = 0; j < nColumnas; j++) {
-
+                try {
+                    Robot robot = new Robot();
+                    executorService = Executors.newSingleThreadScheduledExecutor();
+                    executorService.scheduleAtFixedRate(() -> {
+                        robot.keyPress(KeyEvent.VK_S);
+                    }, 0, 100, TimeUnit.MILLISECONDS); // Presionar cada 100ms
+                } catch (AWTException e) {
+                    e.printStackTrace();
+                }
                 Button casilla = new Button();
                 casilla.setMinWidth(40);
                 casilla.setMinHeight(40);
@@ -224,12 +252,13 @@ public class BuscaminasFX extends Application {
                 // Agregar la variable booleana azul
 // Agregar el controlador del evento MouseEvent.MOUSE_PRESSED
                 casilla.setOnMouseClicked(event -> {
-                    
 
                     int fila = GridPane.getRowIndex(casilla);
                     int columna = GridPane.getColumnIndex(casilla);
                     filaPuntero = fila;
                     columnaPuntero = columna;
+                    arduinoReceiver.setVariableY(fila);
+                    arduinoReceiver.setVariableX(columna);
                     actualizarPuntero(fila, columna);
                     if (cantJug == 1) {
                         if (turno == 1) {
@@ -248,8 +277,6 @@ public class BuscaminasFX extends Application {
                                 // Reemplaza esto con la señal que deseas enviar
                             }
                             if (event.getButton() == MouseButton.PRIMARY) {
-                                arduinoReceiver.setVariableY(fila);
-                                arduinoReceiver.setVariableX(columna);
 
                                 if (buscaminas.tableroVisible[fila][columna] == 8) {
                                     if (mediaPlayer != null) {
@@ -268,6 +295,7 @@ public class BuscaminasFX extends Application {
                                         buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
                                     }
+                                    arduinoReceiver.enviarSenal("2");
                                     buscaminas.descubrirCasilla(fila, columna);
                                     turno = 1;
                                     if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
@@ -277,8 +305,7 @@ public class BuscaminasFX extends Application {
                                         resultadoF = 0;
                                         System.out.println("Jugador perdio");
                                     }
-                                }
-                                else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna]!=0){
+                                } else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna] != 0) {
                                     if (mediaPlayer != null) {
                                         mediaPlayer.stop();
                                     }
@@ -304,8 +331,6 @@ public class BuscaminasFX extends Application {
 
                             }
                             if (event.getButton() == MouseButton.PRIMARY) {
-                                arduinoReceiver.setVariableY(fila);
-                                arduinoReceiver.setVariableX(columna);
 
                                 if (buscaminas.tableroVisible[fila][columna] == 8) {
                                     if (mediaPlayer != null) {
@@ -323,6 +348,7 @@ public class BuscaminasFX extends Application {
                                         buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
                                     }
+                                    arduinoReceiver.enviarSenal("2");
                                     buscaminas.descubrirCasilla(fila, columna);
                                     turno = 2;
                                     if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
@@ -331,8 +357,7 @@ public class BuscaminasFX extends Application {
                                     } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
                                         System.out.println("Jugador perdio");
                                     }
-                                }
-                                else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna]!=0){
+                                } else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna] != 0) {
                                     if (mediaPlayer != null) {
                                         mediaPlayer.stop();
                                     }
@@ -370,7 +395,7 @@ public class BuscaminasFX extends Application {
                             } else {
 
                                 Node temp = buscaminas.listaInc.removeNode();
-
+                                arduinoReceiver.enviarSenal("3");
                                 buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
                                 buscaminas.listaInc.clear();
                                 if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
@@ -403,8 +428,7 @@ public class BuscaminasFX extends Application {
 
                             }
                             if (event.getButton() == MouseButton.PRIMARY) {
-                                arduinoReceiver.setVariableY(fila);
-                                arduinoReceiver.setVariableX(columna);
+
                                 buscaminas.listaInc.clear();
 
                                 if (buscaminas.tableroVisible[fila][columna] == 8) {
@@ -423,6 +447,7 @@ public class BuscaminasFX extends Application {
                                         buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
                                     }
+                                    arduinoReceiver.enviarSenal("2");
                                     buscaminas.descubrirCasilla(fila, columna);
                                     turno = 2;
 
@@ -436,8 +461,7 @@ public class BuscaminasFX extends Application {
                                         resultadoF = 0;
                                     }
 
-                                }
-                                else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna]!=0){
+                                } else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna] != 0) {
                                     if (mediaPlayer != null) {
                                         mediaPlayer.stop();
                                     }
@@ -448,7 +472,7 @@ public class BuscaminasFX extends Application {
                         } else {
 
                             Node temp = buscaminas.listaInc.removeNode();
-
+                            arduinoReceiver.enviarSenal("3");
                             buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
 
                             if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
@@ -471,11 +495,10 @@ public class BuscaminasFX extends Application {
                     buscaminas.mostrarTablero();
                     //System.out.println(buscaminas.casillasVacias(fila,columna));
                     buscaminas.casillaMina(fila, columna);
-                    //buscaminas.casillaSeg(fila, columna);
+                    buscaminas.casillaSeg(fila, columna);
                     buscaminas.agregarListInc(fila, columna);
-                    
-                    //buscaminas.casillaPorcentaje(fila, columna);
 
+                    //buscaminas.casillaPorcentaje(fila, columna);
                     buscaminas.casillaSeg2(fila, columna);
                     //buscaminas.listaProb.clear();
                     //buscaminas.agregarListInc(fila, columna);
@@ -486,17 +509,21 @@ public class BuscaminasFX extends Application {
                         mostrarMensajeFinal();
                     }
                 });
+
                 casilla.setOnKeyPressed(event -> {
+
                     int fila = filaPuntero;
                     int columna = columnaPuntero;
 
                     if (cantJug == 1) {
                         if (turno == 1) {
-                            if (event.getCode() == KeyCode.K) {
+                            if (event.getCode() == KeyCode.K || selecArd==2) {
+                                arduinoReceiver.setVariableSelec(0);
                                 if (banderas[fila][columna]) {
                                     banderas[fila][columna] = false;
                                 } else {
                                     System.out.println("Bandera agregada" + columna + "," + fila);
+                                    arduinoReceiver.enviarSenal("1");
                                     // Agregar la casilla al arreglo banderas
                                     banderas[fila][columna] = true;
                                 }
@@ -520,28 +547,29 @@ public class BuscaminasFX extends Application {
 
                             }
                             if (event.getCode() == KeyCode.LEFT) {
-                                arduinoReceiver.setVariableY(arduinoReceiver.variable2XProperty().get() - 1);
+                                arduinoReceiver.setVariableX(arduinoReceiver.variable2XProperty().get() - 1);
                                 actualizarPuntero(fila, columna);
                                 columnaPuntero--;
                                 actualizarPuntero(fila, columnaPuntero);
 
                             }
                             if (event.getCode() == KeyCode.RIGHT) {
-                                arduinoReceiver.setVariableY(arduinoReceiver.variable2XProperty().get() + 1);
+                                arduinoReceiver.setVariableX(arduinoReceiver.variable2XProperty().get() + 1);
                                 actualizarPuntero(fila, columna);
                                 columnaPuntero++;
                                 actualizarPuntero(fila, columnaPuntero);
 
                             }
-                            if (event.getCode() == KeyCode.SPACE) {
-                                {
-                                    {
+                            if (event.getCode() == KeyCode.SPACE || selecArd == 1) {
+                                arduinoReceiver.setVariableSelec(0);
+                                
+                                    
                                         if (buscaminas.tableroVisible[fila][columna] == 8) {
                                             if (mediaPlayer != null) {
-                                        mediaPlayer.stop();
-                                    }
-                                    mediaPlayer = new MediaPlayer(media);
-                                    mediaPlayer.play();
+                                                mediaPlayer.stop();
+                                            }
+                                            mediaPlayer = new MediaPlayer(media);
+                                            mediaPlayer.play();
                                             if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
                                                 bonus.setBackground(backgroundG);
                                             }
@@ -552,6 +580,7 @@ public class BuscaminasFX extends Application {
                                                 buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
                                             }
+                                            arduinoReceiver.enviarSenal("2");
                                             buscaminas.descubrirCasilla(fila, columna);
                                             turno = 1;
                                             if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
@@ -563,27 +592,29 @@ public class BuscaminasFX extends Application {
                                                 resultadoF = 0;
                                             }
 
+                                        } else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna] != 0) {
+                                            if (mediaPlayer != null) {
+                                                mediaPlayer.stop();
+                                            }
+                                            mediaPlayer = new MediaPlayer(mediaError);
+                                            mediaPlayer.play();
                                         }
-                                        else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna]!=0){
-                                    if (mediaPlayer != null) {
-                                        mediaPlayer.stop();
-                                    }
-                                    mediaPlayer = new MediaPlayer(mediaError);
-                                    mediaPlayer.play();
-                                }
-                                    }
-                                }
+                                    
+                                
                             }
                         }
 
                     } else if (cantJug == 3) {
 
+                        
                         if (turno == 1) {
-                            if (event.getCode() == KeyCode.K) {
+                            if (event.getCode() == KeyCode.K || selecArd==2) {
+                                arduinoReceiver.setVariableSelec(0);
                                 if (banderas[fila][columna]) {
                                     banderas[fila][columna] = false;
                                 } else {
                                     System.out.println("Bandera agregada" + columna + "," + fila);
+                                    arduinoReceiver.enviarSenal("1");
                                     // Agregar la casilla al arreglo banderas
                                     banderas[fila][columna] = true;
                                 }
@@ -619,12 +650,14 @@ public class BuscaminasFX extends Application {
                                 actualizarPuntero(fila, columnaPuntero);
 
                             }
-                            if (event.getCode() == KeyCode.SPACE) {
+                            if (event.getCode() == KeyCode.SPACE || selecArd == 1) {
+                                
+                                arduinoReceiver.setVariableSelec(0);
                                 if (mediaPlayer != null) {
-                                        mediaPlayer.stop();
-                                    }
-                                    mediaPlayer = new MediaPlayer(media);
-                                    mediaPlayer.play();
+                                    mediaPlayer.stop();
+                                }
+                                mediaPlayer = new MediaPlayer(media);
+                                mediaPlayer.play();
 
                                 if (buscaminas.tableroVisible[fila][columna] == 8) {
                                     if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
@@ -637,6 +670,7 @@ public class BuscaminasFX extends Application {
                                         buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
                                     }
+                                    arduinoReceiver.enviarSenal("2");
                                     buscaminas.descubrirCasilla(fila, columna);
                                     turno = 2;
                                     if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
@@ -647,8 +681,7 @@ public class BuscaminasFX extends Application {
                                         System.out.println("Jugador perdioooo");
                                         resultadoF = 0;
                                     }
-                                }
-                                else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna]!=0){
+                                } else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna] != 0) {
                                     if (mediaPlayer != null) {
                                         mediaPlayer.stop();
                                     }
@@ -657,7 +690,8 @@ public class BuscaminasFX extends Application {
                                 }
                             }
                         } else {
-                            if (event.getCode() == KeyCode.B) {
+                            if (event.getCode() == KeyCode.B || selecArd==2 ) {
+                                arduinoReceiver.setVariableSelec(0);
                                 if (contadorTurno >= 0) {
                                     contadorTurno++;
                                     //System.out.println(contadorTurno);
@@ -672,7 +706,7 @@ public class BuscaminasFX extends Application {
                                 if (buscaminas.listaSeg.getSize() > 0) {
                                     Node temp = buscaminas.listaSeg.head;
                                     buscaminas.listaSeg.removeFNode();
-
+                                    arduinoReceiver.enviarSenal("3");
                                     buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
                                     if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
 
@@ -706,12 +740,14 @@ public class BuscaminasFX extends Application {
                     } else if (cantJug == 2) {
 
                         if (turno == 1) {
-                            if (event.getCode() == KeyCode.K) {
+                            if (event.getCode() == KeyCode.K || selecArd==2) {
+                                arduinoReceiver.setVariableSelec(0);
 
                                 if (banderas[fila][columna]) {
                                     banderas[fila][columna] = false;
                                 } else {
                                     System.out.println("Bandera agregada" + columna + "," + fila);
+                                    arduinoReceiver.enviarSenal("1");
                                     // Agregar la casilla al arreglo banderas
                                     banderas[fila][columna] = true;
                                 }
@@ -748,12 +784,13 @@ public class BuscaminasFX extends Application {
 
                             }
 
-                            if (event.getCode() == KeyCode.SPACE) {
+                            if (event.getCode() == KeyCode.SPACE || selecArd == 1) {
+                                arduinoReceiver.setVariableSelec(0);
                                 if (mediaPlayer != null) {
-                                        mediaPlayer.stop();
-                                    }
-                                    mediaPlayer = new MediaPlayer(media);
-                                    mediaPlayer.play();
+                                    mediaPlayer.stop();
+                                }
+                                mediaPlayer = new MediaPlayer(media);
+                                mediaPlayer.play();
 
                                 System.out.println("Fila" + fila + "columna" + columna);
                                 buscaminas.listaInc.clear();
@@ -769,7 +806,9 @@ public class BuscaminasFX extends Application {
                                         buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
                                     }
+                                    arduinoReceiver.enviarSenal("2");
                                     buscaminas.descubrirCasilla(fila, columna);
+
                                     turno = 2;
                                     if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
 
@@ -781,8 +820,7 @@ public class BuscaminasFX extends Application {
                                         resultadoF = 0;
                                         System.out.println("Jugador perdioooo");
                                     }
-                                }
-                                else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna]!=0){
+                                } else if (buscaminas.tableroVisible[fila][columna] != 8 && buscaminas.tableroVisible[fila][columna] != 0) {
                                     if (mediaPlayer != null) {
                                         mediaPlayer.stop();
                                     }
@@ -792,9 +830,10 @@ public class BuscaminasFX extends Application {
                             }
 
                         } else {
-                            if (event.getCode() == KeyCode.B) {
+                            if (event.getCode() == KeyCode.B || selecArd==2) {
+                                arduinoReceiver.setVariableSelec(0);
                                 Node temp = buscaminas.listaInc.removeNode();
-
+                                arduinoReceiver.enviarSenal("2");
                                 buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
 
                                 if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
@@ -855,7 +894,17 @@ public class BuscaminasFX extends Application {
         primaryStage.show();
 
         buscaminas.colocarMinas();
+        primaryStage.setOnCloseRequest(e -> {
+            stop();
+            Platform.exit();
+            System.exit(0);
+        });
     }
+public void stop() {
+    hiloTF = false;
+    executorService.shutdown();
+    
+}
 
     public void actualizarPuntero(int fila, int columna) {
         puntero.setLayoutX((columna * 40) + 40);
@@ -1002,6 +1051,8 @@ public class BuscaminasFX extends Application {
         }
     }
 
+    
+
     private void mostrarMensajeFinal() {
         detenerContador();
         Image casillaM = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/mina.png");
@@ -1048,8 +1099,10 @@ public class BuscaminasFX extends Application {
             Stage ventanaActual = (Stage) btnReiniciar.getScene().getWindow();
 
             // Crea una nueva instancia de la ventana principal
+            arduinoReceiver.closePort();
+
             BuscaminasFX nuevaVentana = new BuscaminasFX(cantJug);
-            ArduinoReceiver receiver = new  ArduinoReceiver();
+
             nuevaVentana.start(new Stage());
 
             // Cierra la ventana actual

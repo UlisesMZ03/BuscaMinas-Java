@@ -8,6 +8,7 @@ class ArduinoReceiver {
 
     private SimpleIntegerProperty variableY = new SimpleIntegerProperty();
     private SimpleIntegerProperty variableX = new SimpleIntegerProperty();
+    private SimpleIntegerProperty variableSelec = new SimpleIntegerProperty();
 SerialPort port;
     public ArduinoReceiver() {
         // Configurar el puerto serie
@@ -28,12 +29,12 @@ SerialPort port;
                     int sum = 0;
                     while (matcher.find()) {
                         int data = Integer.parseInt(matcher.group());
-                        if (data == 1) {
+                        if (data == 3) {
                             if (variableY.get() < 7) {
                                 variableY.set(variableY.get() + 1);
                             }
 
-                        } else if (data == 4) {
+                        } else if (data == 1) {
                             if (variableY.get() > 0) {
                                 variableY.set(variableY.get() - 1);
                             }
@@ -41,10 +42,18 @@ SerialPort port;
                             if (variableX.get() < 7) {
                                 variableX.set(variableX.get() + 1);
                             }
-                        } else if (data == 3) {
+                        } else if (data == 4) {
                             if (variableX.get() > 0) {
                                 variableX.set(variableX.get() - 1);
                             }
+                        }
+                        else if (data==5){
+                            variableSelec.set(1);
+                            System.out.println("Se presiono para colocar mina: "+variableSelec);
+                        }
+                        else if (data==6){
+                            variableSelec.set(2);
+                            System.out.println("Se presiono para colocar mina: "+variableSelec);
                         }
 
                     }
@@ -56,11 +65,17 @@ SerialPort port;
         thread.setDaemon(true);
         thread.start();
     }
+    public void closePort() {
+    port.closePort();
+}
     public void setVariableY(int value) {
         variableY.set(value);
     }
     public void setVariableX(int value) {
         variableX.set(value);
+    }
+    public void setVariableSelec(int value) {
+        variableSelec.set(value);
     }
 
     public SimpleIntegerProperty variableProperty() {
@@ -70,9 +85,14 @@ SerialPort port;
     public SimpleIntegerProperty variable2XProperty() {
         return variableX;
     }
+    public SimpleIntegerProperty variableSProperty() {
+        return variableSelec;
+    }
     public void enviarSenal(String senal) {
     port.writeBytes(senal.getBytes(), senal.length());
         System.out.println("Señal enviada");
 }
+    
+
 
 }

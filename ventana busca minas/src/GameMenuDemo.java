@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,6 +29,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 
 public class GameMenuDemo extends Application {
@@ -39,6 +42,9 @@ public class GameMenuDemo extends Application {
     private Image img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/bg3.png");
     ImageView imgView = new ImageView(img);
     private int pag = 0;
+    private File file = new File("/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/sounds/botonMenu.mp3");
+    private Media media = new Media(file.toURI().toString());
+    private MediaPlayer mediaPlayer;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -115,6 +121,11 @@ public class GameMenuDemo extends Application {
 
             MenuButton btnTutorial = new MenuButton("TUTORIAL", 230, 30, 10);
             btnTutorial.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
 
                 img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial1.1.png");
                 imgView = new ImageView(img);
@@ -137,8 +148,13 @@ public class GameMenuDemo extends Application {
 
             MenuButton btnOptions = new MenuButton("PLAY", 230, 30, 10);
             btnOptions.setOnMouseClicked(event -> {
-                getChildren().add(menu1);
 
+                getChildren().add(menu1);
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu0);
                 tt.setToX(menu0.getTranslateX() - offset);
 
@@ -155,12 +171,23 @@ public class GameMenuDemo extends Application {
 
             MenuButton btnExit = new MenuButton("EXIT", 230, 30, 10);
             btnExit.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 System.exit(0);
             });
 
             MenuButton btnBack = new MenuButton("BACK", 230, 30, 10);
             btnBack.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 getChildren().add(menu0);
+                
 
                 TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu1);
                 tt.setToX(menu1.getTranslateX() + offset);
@@ -179,6 +206,11 @@ public class GameMenuDemo extends Application {
             MenuButton btnDummy = new MenuButton("Dummy AI", 230, 30, 10);
             MenuButton btnAdvance = new MenuButton("Advance AI", 230, 30, 10);
             btnDummy.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 if (buscaminas == null) {
                     buscaminas = new BuscaminasFX(2);
                 }
@@ -187,6 +219,11 @@ public class GameMenuDemo extends Application {
                 gameMenu.setVisible(false);
             });
             btnSingle.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 if (buscaminas == null) {
                     buscaminas = new BuscaminasFX(1);
                 }
@@ -195,6 +232,11 @@ public class GameMenuDemo extends Application {
                 gameMenu.setVisible(false);
             });
             btnAdvance.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 if (buscaminas == null) {
                     buscaminas = new BuscaminasFX(3);
                 }
@@ -206,6 +248,11 @@ public class GameMenuDemo extends Application {
             MenuButton btnBackTuto = new MenuButton("MENU", 55, 30, 2);
 
             btnBackTuto.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 pag = 0;
                 img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/bg3.png");
                 imgView = new ImageView(img);
@@ -247,6 +294,11 @@ public class GameMenuDemo extends Application {
             bg.setOpacity(0.01);
             System.out.println("Hola");
             btnBackT.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 if (pag > 0) {
                     pag--;
                 }
@@ -264,7 +316,7 @@ public class GameMenuDemo extends Application {
                 }
                 if (pag == 1) {
                     getChildren().clear();
-                    Image image1 = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial2.1.png");
+                    Image image1 = new Image("file:/C:/Usears/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial2.1.png");
                     Image image2 = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial2.png");
 
                     // Crea dos objetos ImageView con las imágenes
@@ -367,6 +419,11 @@ public class GameMenuDemo extends Application {
 
             });
             btnNextT.setOnMouseClicked(event -> {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.play();
                 if (pag < 5) {
                     pag++;
                 }
@@ -479,7 +536,7 @@ public class GameMenuDemo extends Application {
 //                    hbox.setTranslateX(53);
 //                    hbox.setTranslateY(140);
                     getChildren().remove(menu2);
-                    
+
                     getChildren().addAll(imgaView, menu2);
                 }
             });
