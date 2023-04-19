@@ -41,7 +41,7 @@ public class GameMenuDemo extends Application {
         root.setPrefSize(400, 400);
 
         //InputStream is = Files.newInputStream(Paths.get(""));
-        Image img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/fondoMenu.png");
+        Image img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/fondoMenu.png");
         //is.close();
 
         ImageView imgView = new ImageView(img);

@@ -163,7 +163,7 @@ public class Buscaminas {
                             if (!listaMina.contains(j + 1, i + 1) && tableroVisible[i][j] == 8) {
                                 if (listaSeg.contains(j + 1, i + 1)) {
                                     double prob = (double) 0;
-                                    System.out.println("Incertidumbre: " + (prob) + "en: " + (j + 1) + "," + (i + 1));
+                                    //System.out.println("Incertidumbre: " + (prob) + "en: " + (j + 1) + "," + (i + 1));
                                     listaProb.addNode(j+1, i+1, prob);
                                     listaProb.printList1();
                                 } 
@@ -176,7 +176,7 @@ public class Buscaminas {
                                     
                                     listaProb.printList1();
                                     
-                                    System.out.println("Incertidumbre: " + (prob) + "en: " + (j + 1) + "," + (i + 1));
+                                    //System.out.println("Incertidumbre: " + (prob) + "en: " + (j + 1) + "," + (i + 1));
                                 }
                                 
 
@@ -202,7 +202,8 @@ public class Buscaminas {
                         for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
                             if (!listaMina.contains(j + 1, i + 1) && tableroVisible[i][j] == 8) {
                                 listaSeg.addNode(j + 1, i + 1);
-                                listaSeg.printList1();
+                                System.out.println("Holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                                //listaSeg.printList1();
                             }
                             if (listaSeg.contains(j + 1, i + 1) && tableroVisible[i][j] < 8) {
                                 listaSeg.removeNode(j + 1, i + 1);
@@ -270,7 +271,7 @@ public class Buscaminas {
             for (columna = 0; columna < nFilas; columna++) {
                 if (tableroVisible[fila][columna] == 8) {
                     listaInc.addNode(columna + 1, fila + 1);
-                    listaInc.printList1();
+                    //listaInc.printList1();
 
                 }
 //                if (listaInc.contains(columna+1, fila+1) && tableroVisible[columna][fila] < 8) {
