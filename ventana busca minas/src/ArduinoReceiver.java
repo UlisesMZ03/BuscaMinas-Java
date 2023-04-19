@@ -4,12 +4,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.beans.property.SimpleIntegerProperty;
 
-class ArduinoReceiver {
+/**
+ *
+ * La clase ArduinoReceiver se utiliza para recibir y procesar datos enviados
+ * por el puerto serial de Arduino. También proporciona métodos para configurar
+ * y enviar señales a Arduino.
+ */
+public class ArduinoReceiver {
 
     private SimpleIntegerProperty variableY = new SimpleIntegerProperty();
     private SimpleIntegerProperty variableX = new SimpleIntegerProperty();
     private SimpleIntegerProperty variableSelec = new SimpleIntegerProperty();
-SerialPort port;
+    SerialPort port;
+
+    /**
+     * El constructor de la clase ArduinoReceiver configura y abre el puerto
+     * serie para la comunicación con Arduino. También inicia un hilo para leer
+     * los datos enviados por Arduino y actualizar las propiedades
+     * correspondientes.
+     */
     public ArduinoReceiver() {
         // Configurar el puerto serie
         port = SerialPort.getCommPort("COM6"); // Cambiar a tu puerto Arduino
@@ -22,11 +35,11 @@ SerialPort port;
             while (true) {
                 byte[] buffer = new byte[1024];
                 int numRead = port.readBytes(buffer, buffer.length);
-                
+
                 if (numRead > 0) {
                     String receivedData = new String(buffer, 0, numRead);
                     Matcher matcher = Pattern.compile("\\d+").matcher(receivedData);
-                    int sum = 0;
+
                     while (matcher.find()) {
                         int data = Integer.parseInt(matcher.group());
                         if (data == 3) {
@@ -46,14 +59,12 @@ SerialPort port;
                             if (variableX.get() > 0) {
                                 variableX.set(variableX.get() - 1);
                             }
-                        }
-                        else if (data==5){
+                        } else if (data == 5) {
                             variableSelec.set(1);
-                            System.out.println("Se presiono para colocar mina: "+variableSelec);
-                        }
-                        else if (data==6){
+                            System.out.println("Se presiono para colocar mina: " + variableSelec);
+                        } else if (data == 6) {
                             variableSelec.set(2);
-                            System.out.println("Se presiono para colocar mina: "+variableSelec);
+                            System.out.println("Se presiono para colocar mina: " + variableSelec);
                         }
 
                     }
@@ -65,34 +76,87 @@ SerialPort port;
         thread.setDaemon(true);
         thread.start();
     }
+
+    /**
+     * El método closePort se utiliza para cerrar el puerto serie y terminar la
+     * comunicación con Arduino.
+     */
     public void closePort() {
-    port.closePort();
-}
+        port.closePort();
+    }
+
+    /**
+     * El método setVariableY se utiliza para establecer el valor de la
+     * propiedad variableY.
+     *
+     * @param value el nuevo valor de la propiedad variableY.
+     */
     public void setVariableY(int value) {
         variableY.set(value);
     }
+
+    /**
+     * El método setVariableX se utiliza para establecer el valor de la
+     * propiedad variableX.
+     *
+     * @param value el nuevo valor de la propiedad variableX.
+     */
     public void setVariableX(int value) {
         variableX.set(value);
     }
+
+    /**
+     * El método setVariableSelec se utiliza para establecer el valor de la
+     * propiedad variableSelec.
+     *
+     * @param value el nuevo valor de la propiedad variableSelec.
+     */
     public void setVariableSelec(int value) {
         variableSelec.set(value);
     }
 
+    /*
+    
+     */
+    /**
+     *
+     * Devuelve la propiedad variableY.
+     *
+     * @return la propiedad variableY.
+     */
     public SimpleIntegerProperty variableProperty() {
         return variableY;
     }
 
+    /**
+     *
+     * Devuelve la propiedad variableX.
+     *
+     * @return la propiedad variableX.
+     */
     public SimpleIntegerProperty variable2XProperty() {
         return variableX;
     }
+
+    /**
+     *
+     * Devuelve la propiedad variableSelec.
+     *
+     * @return la propiedad variableSelec.
+     */
     public SimpleIntegerProperty variableSProperty() {
         return variableSelec;
     }
-    public void enviarSenal(String senal) {
-    port.writeBytes(senal.getBytes(), senal.length());
-        System.out.println("Señal enviada");
-}
-    
 
+    /**
+     *
+     * Envia una señal al puerto serie.
+     *
+     * @param senal la señal a enviar.
+     */
+    public void enviarSenal(String senal) {
+        port.writeBytes(senal.getBytes(), senal.length());
+        System.out.println("Señal enviada");
+    }
 
 }

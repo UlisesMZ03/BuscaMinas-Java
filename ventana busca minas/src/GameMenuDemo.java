@@ -1,8 +1,5 @@
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
@@ -33,6 +30,13 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 
+/**
+ *
+ * Clase GameMenuDemo que implementa la aplicación principal del juego
+ * BuscaminasFX.
+ *
+ * @author Ulises Mendez
+ */
 public class GameMenuDemo extends Application {
 
     private BuscaminasFX buscaminas;
@@ -46,6 +50,15 @@ public class GameMenuDemo extends Application {
     private Media media = new Media(file.toURI().toString());
     private MediaPlayer mediaPlayer;
 
+    /**
+     *
+     * Método start que inicia la aplicación con la ventana principal.
+     *
+     * @param primaryStage el objeto Stage principal que se utilizará para
+     * mostrar la aplicación.
+     *
+     * @throws Exception si ocurre algún error durante la ejecución del método.
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -53,15 +66,8 @@ public class GameMenuDemo extends Application {
         Pane root = new Pane();
         root.setPrefSize(400, 400);
 
-        //InputStream is = Files.newInputStream(Paths.get(""));
-        //Image img = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/bg3.png");
-        //Image imgTuto = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial1.1.png");
-        //is.close();
-        //ImageView imgViewTuto = new ImageView(imgTuto);
         imgView.setFitWidth(400);
         imgView.setFitHeight(400);
-        //imgViewTuto.setFitWidth(400);
-        //imgViewTuto.setFitHeight(400);
 
         gameMenu = new GameMenu();
         gameMenu.setVisible(true);
@@ -92,21 +98,22 @@ public class GameMenuDemo extends Application {
         primaryStage.show();
     }
 
+    /**
+     *
+     * La clase GameMenu representa un menú para un juego. Es una clase anidada
+     * privada de otra clase.
+     */
     private class GameMenu extends Parent {
 
+        /**
+         *
+         * Crea una nueva instancia de la clase GameMenu.
+         */
         public GameMenu() {
-            //Image imgTuto = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial1.1.png");
-            //is.close();
 
-            // ImageView imgViewTuto = new ImageView(imgTuto);
             VBox menu0 = new VBox(10);
             VBox menu1 = new VBox(10);
             VBox menu2 = new VBox(10);
-            //imgViewTuto.setFitWidth(400);
-            //imgViewTuto.setFitHeight(400);
-            //imgViewTuto.setTranslateX(-50);
-            //imgViewTuto.setTranslateY(-150);
-//            menu2.getChildren().add(imgViewTuto);
 
             menu0.setTranslateX(50);
             menu0.setTranslateY(150);
@@ -187,7 +194,6 @@ public class GameMenuDemo extends Application {
                 mediaPlayer = new MediaPlayer(media);
                 mediaPlayer.play();
                 getChildren().add(menu0);
-                
 
                 TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu1);
                 tt.setToX(menu1.getTranslateX() + offset);
@@ -309,8 +315,6 @@ public class GameMenuDemo extends Application {
                     getChildren().clear();
                     Image imga = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial1.1.png");
                     ImageView imgaView = new ImageView(imga);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
                     getChildren().remove(menu2);
                     getChildren().addAll(imgaView, menu2);
                 }
@@ -347,8 +351,6 @@ public class GameMenuDemo extends Application {
                     StackPane root = new StackPane();
                     root.setAlignment(Pos.CENTER);
 
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
                     getChildren().remove(menu2);
                     getChildren().addAll(imageView1, imageView2, menu2);
                     sequentialTransition.play();
@@ -385,9 +387,7 @@ public class GameMenuDemo extends Application {
                     // Crea un objeto StackPane y agrega los ImageView
                     StackPane root = new StackPane();
                     root.setAlignment(Pos.CENTER);
-//
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
+
                     getChildren().remove(menu2);
                     getChildren().addAll(imageView1, imageView2, menu2);
                     sequentialTransition.play();
@@ -395,24 +395,18 @@ public class GameMenuDemo extends Application {
                 if (pag == 3) {
                     Image imga = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial4.png");
                     ImageView imgaView = new ImageView(imga);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
                     getChildren().remove(menu2);
                     getChildren().addAll(imgaView, menu2);
                 }
                 if (pag == 4) {
                     Image imga = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial5.png");
                     ImageView imgaView = new ImageView(imga);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
                     getChildren().remove(menu2);
                     getChildren().addAll(imgaView, menu2);
                 }
                 if (pag == 5) {
                     Image imga = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial6.png");
                     ImageView imgaView = new ImageView(imga);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
                     getChildren().remove(menu2);
                     getChildren().addAll(imgaView, menu2);
                 }
@@ -427,7 +421,6 @@ public class GameMenuDemo extends Application {
                 if (pag < 5) {
                     pag++;
                 }
-                //getChildren().clear();
 
                 System.out.println("Pagina: " + pag);
                 if (pag == 0) {
@@ -443,8 +436,6 @@ public class GameMenuDemo extends Application {
                     ImageView imageView1 = new ImageView(image1);
                     ImageView imageView2 = new ImageView(image2);
 
-                    // Ajusta el tamaño de los ImageView a la ventana
-                    // Crea dos objetos FadeTransition para desvanecer las imágenes dentro y fuera
                     FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.5), imageView1);
                     fadeIn.setFromValue(0);
                     fadeIn.setToValue(1);
@@ -453,22 +444,17 @@ public class GameMenuDemo extends Application {
                     fadeOut.setFromValue(1);
                     fadeOut.setToValue(0);
 
-                    // Crea un objeto PauseTransition para esperar 2 segundos antes de comenzar la animación
                     PauseTransition pause = new PauseTransition(Duration.seconds(0.6));
                     PauseTransition pause2 = new PauseTransition(Duration.seconds(0.6));
                     // Crea un objeto SequentialTransition para reproducir las transiciones en secuencia
                     SequentialTransition sequentialTransition = new SequentialTransition();
                     sequentialTransition.getChildren().addAll(pause, fadeIn, fadeOut, pause2);
 
-                    // Reproduce la animación en bucle
                     sequentialTransition.setCycleCount(SequentialTransition.INDEFINITE);
 
-                    // Crea un objeto StackPane y agrega los ImageView
                     StackPane root = new StackPane();
                     root.setAlignment(Pos.CENTER);
 
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
                     getChildren().remove(menu2);
                     getChildren().addAll(imageView1, imageView2, menu2);
                     sequentialTransition.play();
@@ -500,16 +486,8 @@ public class GameMenuDemo extends Application {
                     SequentialTransition sequentialTransition = new SequentialTransition();
                     sequentialTransition.getChildren().addAll(pause, fadeIn, fadeOut, pause2);
 
-                    // Reproduce la animación en bucle
                     sequentialTransition.setCycleCount(SequentialTransition.INDEFINITE);
 
-                    // Crea un objeto StackPane y agrega los ImageView
-//                    StackPane root = new StackPane();
-//                    root.setAlignment(Pos.CENTER);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
-//                    btnBackTuto.setTranslateY(370);
-//                    btnBackTuto.setTranslateX(170);
                     getChildren().remove(menu2);
                     getChildren().addAll(imageView1, imageView2, menu2);
                     sequentialTransition.play();
@@ -517,24 +495,21 @@ public class GameMenuDemo extends Application {
                 if (pag == 3) {
                     Image imga = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial4.png");
                     ImageView imgaView = new ImageView(imga);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
+
                     getChildren().remove(menu2);
                     getChildren().addAll(imgaView, menu2);
                 }
                 if (pag == 4) {
                     Image imga = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial5.png");
                     ImageView imgaView = new ImageView(imga);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
+
                     getChildren().remove(menu2);
                     getChildren().addAll(imgaView, menu2);
                 }
                 if (pag == 5) {
                     Image imga = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/tutorial6.png");
                     ImageView imgaView = new ImageView(imga);
-//                    hbox.setTranslateX(53);
-//                    hbox.setTranslateY(140);
+
                     getChildren().remove(menu2);
 
                     getChildren().addAll(imgaView, menu2);
@@ -545,10 +520,30 @@ public class GameMenuDemo extends Application {
         }
     }
 
+    /**
+     *
+     * La clase MenuButton representa un botón de menú. Es una clase anidada
+     * privada y estática de otra clase.
+     *
+     * @author Ulises Mendez
+     */
     private static class MenuButton extends StackPane {
 
         private Text text;
 
+        /**
+         *
+         * Crea una nueva instancia de la clase MenuButton con un nombre, una
+         * posición x y y y una traslación dada.
+         *
+         * @param name el nombre del botón
+         *
+         * @param x la posición x del botón
+         *
+         * @param y la posición y del botón
+         *
+         * @param translate la traslación del botón
+         */
         public MenuButton(String name, int x, int y, int translate) {
             Font pixelFont = Font.loadFont("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/fonts/digital-7.ttf", 30);
             text = new Text(name);
@@ -586,6 +581,14 @@ public class GameMenuDemo extends Application {
         }
     }
 
+    /**
+     *
+     * El método main es el punto de entrada de la aplicación. Se encarga de
+     * iniciar la aplicación JavaFX.
+     *
+     * @param args los argumentos de línea de comando (no se utilizan en este
+     * caso)
+     */
     public static void main(String[] args) {
         launch(args);
     }
