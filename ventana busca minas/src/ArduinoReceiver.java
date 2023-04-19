@@ -1,41 +1,66 @@
+
 import com.fazecast.jSerialComm.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.beans.property.SimpleIntegerProperty;
 
-public class ArduinoReceiver {
+class ArduinoReceiver {
 
-    private int variable = 0;
+    private SimpleIntegerProperty variableY = new SimpleIntegerProperty();
+    private SimpleIntegerProperty variableX = new SimpleIntegerProperty();
 
     public ArduinoReceiver() {
+        // Configurar el puerto serie
         SerialPort port = SerialPort.getCommPort("COM6"); // Cambiar a tu puerto Arduino
         port.openPort();
         port.setBaudRate(9600); // Configurar la velocidad del puerto serie según la configuración de Arduino
         port.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 100, 0); // Configurar los tiempos de espera
 
-        while (true) {
-            byte[] buffer = new byte[1024];
-            int numRead = port.readBytes(buffer, buffer.length);
-            if (numRead > 0) {
-                String receivedData = new String(buffer, 0, numRead);
-                processData(receivedData);
+        // Crear un hilo para leer los datos del puerto serie y actualizar la propiedad variableProperty
+        Thread thread = new Thread(() -> {
+            while (true) {
+                byte[] buffer = new byte[1024];
+                int numRead = port.readBytes(buffer, buffer.length);
+                if (numRead > 0) {
+                    String receivedData = new String(buffer, 0, numRead);
+                    Matcher matcher = Pattern.compile("\\d+").matcher(receivedData);
+                    int sum = 0;
+                    while (matcher.find()) {
+                        int data = Integer.parseInt(matcher.group());
+                        if (data == 1) {
+                            if (variableY.get() < 7) {
+                                variableY.set(variableY.get() + 1);
+                            }
+
+                        } else if (data == 4) {
+                            if (variableY.get() > 0) {
+                                variableY.set(variableY.get() - 1);
+                            }
+                        } else if (data == 2) {
+                            if (variableX.get() < 7) {
+                                variableX.set(variableX.get() + 1);
+                            }
+                        } else if (data == 3) {
+                            if (variableX.get() > 0) {
+                                variableX.set(variableX.get() - 1);
+                            }
+                        }
+
+                    }
+
+                }
             }
         }
+        );
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    public void processData(String receivedData) {
-    // Utilizar una expresión regular para extraer solo los números de los datos recibidos
-    Matcher matcher = Pattern.compile("\\d+").matcher(receivedData);
-    int sum = 0;
-    while (matcher.find()) {
-        int data = Integer.parseInt(matcher.group());
-        System.out.println("Dato: " + data);
-        variable += data;
+    public SimpleIntegerProperty variableProperty() {
+        return variableY;
     }
-    
-    System.out.println(variable);
-}
 
-    public int getVariable() {
-        return variable;
+    public SimpleIntegerProperty variable2XProperty() {
+        return variableX;
     }
 }

@@ -5,6 +5,8 @@ import java.util.TimerTask;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -53,11 +55,12 @@ public class BuscaminasFX extends Application {
 
     ArduinoReceiver arduinoReceiver;
     private int variableValue;
+    private IntegerProperty variableProperty = new SimpleIntegerProperty(0);
 
     private int contadorTurno = 0;
     private int segundos = 0;
     private Timer timer;
-
+private Label labelVariable;
     Image casillaB = new Image("file:/C:/Users/ulise/Desktop/TEC/Algoritmos y estructura de datos I/BuscaMinas/ventana busca minas/src/images/casilla.png");
     BackgroundImage backgroundCasilla = new BackgroundImage(casillaB, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(0, 0, true, true, false, false));
 
@@ -70,26 +73,40 @@ public class BuscaminasFX extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Thread arduinoThread = new Thread(() -> {
-            arduinoReceiver = new ArduinoReceiver();
+        labelVariable = new Label();
+        pane.getChildren().add(labelVariable);
 
+        // Escuchar los cambios de la propiedad variableProperty
+        labelControl = new Label();
+        ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
+        
+        
+        Thread thread = new Thread(() -> {
             while (true) {
-                int variableValue = arduinoReceiver.getVariable();
-                labelControl.setText("Valor de la variable: " + variableValue);
-                // Actualizar el valor de la etiqueta en la interfaz de usuario
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Platform.runLater(() -> {
-                    labelControl.setText("Valor de la variable: " + variableValue);
+                    actualizarPuntero(arduinoReceiver.variableProperty().get(),arduinoReceiver.variable2XProperty().get() );
+                    filaPuntero = arduinoReceiver.variableProperty().get();
+                    columnaPuntero = arduinoReceiver.variable2XProperty().get();
+                    
                 });
             }
         });
-        arduinoThread.setDaemon(true);
-        arduinoThread.start();
+        thread.setDaemon(true);
+        thread.start();
+        
 
+        
         iniciarContador();
         // Pane pane = new Pane();
         GridPane root = new GridPane();
         pane.getChildren().add(root);
         pane.getChildren().add(puntero);
+        pane.getChildren().add(labelControl);
         puntero.setLayoutX(40);
         puntero.setLayoutY(63);
         puntero.setFill(null);
@@ -363,8 +380,8 @@ public class BuscaminasFX extends Application {
                     }
 
                     mostrarTablero();
+                    // variableValue = arduinoReceiver.getVariable();
 
-                    labelControl.setText(String.valueOf(variableValue));
                     buscaminas.mostrarTablero();
                     //System.out.println(buscaminas.casillasVacias(fila,columna));
                     buscaminas.casillaMina(fila, columna);
@@ -646,8 +663,8 @@ public class BuscaminasFX extends Application {
                     }
 
                     mostrarTablero();
-                    labelControl.setText("Valor de la variable: " + variableValue);
                     buscaminas.mostrarTablero();
+                    
                     //System.out.println(buscaminas.casillasVacias(fila,columna));
                     buscaminas.casillaMina(fila, columna);
                     buscaminas.casillaSeg(fila, columna);
@@ -710,7 +727,8 @@ public class BuscaminasFX extends Application {
                         pane.getChildren().add(labelSegundos);
 
                     }
-                    labelSegundos.setText(String.valueOf(variableValue));
+                    
+                    labelSegundos.setText(String.valueOf(segundos));
                 });
 
             }
