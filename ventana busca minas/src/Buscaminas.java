@@ -19,7 +19,7 @@ public class Buscaminas {
     segList listaSeg;
     incList listaInc;
     segList listaSeg2;
-
+    ProbList listaProb;
     public Buscaminas() {
         inicializarTablero();
         colocarMinas();
@@ -27,6 +27,7 @@ public class Buscaminas {
         listaSeg = new segList();
         listaInc = new incList();
         listaSeg2 = new segList();
+        listaProb = new ProbList();
     }
 
     private void inicializarTablero() {
@@ -148,23 +149,37 @@ public class Buscaminas {
         }
     }
 
-    
-    
     void casillaSeg2(int fila, int columna) {
+        listaProb.clear();
         for (fila = 0; fila < nFilas; fila++) {
 
             for (columna = 0; columna < nFilas; columna++) {
 
-                if ((nMinas(fila, columna) < tableroVisible[fila][columna]) && tableroVisible[fila][columna]!=8) {
+                if ((nMinas(fila, columna) <= tableroVisible[fila][columna]) && tableroVisible[fila][columna] != 8) {
 
                     for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
 
                         for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
                             if (!listaMina.contains(j + 1, i + 1) && tableroVisible[i][j] == 8) {
-                                int nume = tableroVisible[fila][columna]-nMinas(fila,columna);
-                                int deno = casillasVacias(fila, columna);
-                                double prob = (double) nume/deno;
-                                System.out.println("Incertidumbre: "+ (prob)+"en: "+(j+1)+","+(i+1));
+                                if (listaSeg.contains(j + 1, i + 1)) {
+                                    double prob = (double) 0;
+                                    System.out.println("Incertidumbre: " + (prob) + "en: " + (j + 1) + "," + (i + 1));
+                                    listaProb.addNode(j+1, i+1, prob);
+                                    listaProb.printList1();
+                                } 
+                                else {
+                                    int nume = tableroVisible[fila][columna] - nMinas(fila, columna);
+                                    int deno = casillasVacias(fila, columna);
+                                    double prob = (double) nume / deno;
+                                   
+                                    listaProb.addNode(j+1, i+1, prob);
+                                    
+                                    listaProb.printList1();
+                                    
+                                    System.out.println("Incertidumbre: " + (prob) + "en: " + (j + 1) + "," + (i + 1));
+                                }
+                                
+
                             }
 
                         }
@@ -174,8 +189,7 @@ public class Buscaminas {
             }
         }
     }
-    
-    
+
     void casillaSeg(int fila, int columna) {
         for (fila = 0; fila < nFilas; fila++) {
 
@@ -279,19 +293,17 @@ public class Buscaminas {
                     for (int i = Math.max(fila - 1, 0); i <= Math.min(fila + 1, nFilas - 1); i++) {
 
                         for (int j = Math.max(columna - 1, 0); j <= Math.min(columna + 1, nColumnas - 1); j++) {
-                            if (tableroVisible[i][j] == 8 && minas>0){
-                                prob = (double) min((tableroVisible[fila][columna] - minas), 0) / min((cantVacias(fila, columna) - minas),0);
+                            if (tableroVisible[i][j] == 8 && minas > 0) {
+                                prob = (double) min((tableroVisible[fila][columna] - minas), 0) / min((cantVacias(fila, columna) - minas), 0);
 
-                                System.out.println("La prob hiles:" + prob + "en: " + (j+1) + "," + (i+1));
+                                System.out.println("La prob hiles:" + prob + "en: " + (j + 1) + "," + (i + 1));
                             }
-                            if (tableroVisible[i][j] == 8 && minas==0){
-                                prob = (double) min((tableroVisible[fila][columna]), 0) / min((cantVacias(fila, columna)),0);
-                                System.out.println("La prob hiles:" + prob + "en: " + (j+1) + "," + (i+1));
+                            if (tableroVisible[i][j] == 8 && minas == 0) {
+                                prob = (double) min((tableroVisible[fila][columna]), 0) / min((cantVacias(fila, columna)), 0);
+                                System.out.println("La prob hiles:" + prob + "en: " + (j + 1) + "," + (i + 1));
                             }
-                            
+
                         }
-
-                        
 
 //System.out.println("incertidumbre de la casilla"+columna+","+fila+"="+());
                     }

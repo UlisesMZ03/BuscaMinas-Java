@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -37,13 +38,16 @@ public class BuscaminasFX extends Application {
     private final int nColumnas = 8;
     private Label labelSegundos = new Label("0");
     Rectangle rect = new Rectangle(40, 40);
+    Rectangle puntero = new Rectangle(40, 40);
+    
     private Button[][] casillas = new Button[nFilas][nColumnas];
     private boolean[][] banderas = new boolean[nFilas][nColumnas];
     private Buscaminas buscaminas = new Buscaminas();
     private int turno = 1;
     boolean azul = false;
     private Pane pane = new Pane();
-
+    private int filaPuntero = 0;
+    private int columnaPuntero = 0;
     DropShadow shadow = new DropShadow(5, Color.BLACK);
 
     private int contadorTurno = 0;
@@ -67,6 +71,15 @@ public class BuscaminasFX extends Application {
         // Pane pane = new Pane();
         GridPane root = new GridPane();
         pane.getChildren().add(root);
+        pane.getChildren().add(puntero);
+        puntero.setLayoutX(40);
+        puntero.setLayoutY(63);
+        puntero.setFill(null);
+puntero.setStrokeWidth(2);
+puntero.setStroke(Color.GREEN);
+        puntero.setFill(null);
+puntero.setStrokeWidth(3);
+puntero.setStroke(Color.GREEN);
         root.setTranslateX(40);
         root.setTranslateY(63);
         labelSegundos.setLayoutX(67);
@@ -103,7 +116,7 @@ public class BuscaminasFX extends Application {
 
                     System.out.println("Turno1");
                     if (buscaminas.listaSeg.getSize() > 0) {
-                       
+
                         Node temp = buscaminas.listaSeg.head;
                         buscaminas.listaSeg.removeFNode();
 
@@ -149,64 +162,181 @@ public class BuscaminasFX extends Application {
 
                 // Agregar la variable booleana azul
 // Agregar el controlador del evento MouseEvent.MOUSE_PRESSED
-                casilla.setOnMouseClicked(event -> {
+                casilla.setOnKeyPressed(event -> {
+                    int fila = filaPuntero;
+                    int columna = columnaPuntero;
 
-                    int fila = GridPane.getRowIndex(casilla);
-                    int columna = GridPane.getColumnIndex(casilla);
-                    if (cantJug==1){
+                    if (cantJug == 1) {
                         if (turno == 1) {
-                        if (event.getButton() == MouseButton.SECONDARY) {
-                            if (banderas[fila][columna]) {
-                                banderas[fila][columna] = false;
-                            } else {
-                                System.out.println("Bandera agregada" + columna + "," + fila);
-                                // Agregar la casilla al arreglo banderas
-                                banderas[fila][columna] = true;
+                            if (event.getCode() == KeyCode.K) {
+                                if (banderas[fila][columna]) {
+                                    banderas[fila][columna] = false;
+                                } else {
+                                    System.out.println("Bandera agregada" + columna + "," + fila);
+                                    // Agregar la casilla al arreglo banderas
+                                    banderas[fila][columna] = true;
+                                }
+
                             }
+                            if (event.getCode() == KeyCode.SPACE) {
+                                {
+                                    {
+                                        if (buscaminas.tableroVisible[fila][columna] == 8) {
+                                            if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
+                                                bonus.setBackground(backgroundG);
+                                            }
+                                            if (contadorTurno < 2) {
+                                                bonus.setBackground(backgroundR);
+                                            }
+                                            if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
+                                                buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
 
-                        }
-                        if (event.getButton() == MouseButton.PRIMARY) {
-                            {
-                                if (buscaminas.tableroVisible[fila][columna] == 8) {
-                                    if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
-                                        bonus.setBackground(backgroundG);
-                                    }
-                                    if (contadorTurno < 2) {
-                                        bonus.setBackground(backgroundR);
-                                    }
-                                    if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
-                                        buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
+                                            }
+                                            buscaminas.descubrirCasilla(fila, columna);
+                                            turno = 1;
+                                            if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
 
-                                    }
-                                    buscaminas.descubrirCasilla(fila, columna);
-                                    turno = 1;
-                                    if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
-
-                                        System.out.println("Jugador gano");
-                                    } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
-                                        System.out.println("Jugador perdio");
+                                                System.out.println("Jugador gano");
+                                            } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
+                                                System.out.println("Jugador perdio");
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                    }}
-                    else if(cantJug==3){
-                        
-                    
-                    if (turno == 1) {
-                        if (event.getButton() == MouseButton.SECONDARY) {
-                            if (banderas[fila][columna]) {
-                                banderas[fila][columna] = false;
+                    } else if (cantJug == 3) {
+
+                        if (turno == 1) {
+                            if (event.getCode() == KeyCode.K) {
+                                if (banderas[fila][columna]) {
+                                    banderas[fila][columna] = false;
+                                } else {
+                                    System.out.println("Bandera agregada" + columna + "," + fila);
+                                    // Agregar la casilla al arreglo banderas
+                                    banderas[fila][columna] = true;
+                                }
+
+                            }
+                            if (event.getCode() == KeyCode.SPACE) {
+                                {
+
+                                    {
+                                        if (buscaminas.tableroVisible[fila][columna] == 8) {
+                                            if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
+                                                bonus.setBackground(backgroundG);
+                                            }
+                                            if (contadorTurno < 2) {
+                                                bonus.setBackground(backgroundR);
+                                            }
+                                            if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
+                                                buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
+
+                                            }
+                                            buscaminas.descubrirCasilla(fila, columna);
+                                            turno = 2;
+                                            if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+
+                                                System.out.println("Jugador gano");
+                                            } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
+                                                System.out.println("Jugador perdio");
+                                            }
+                                        }
+                                    }
+                                }
                             } else {
-                                System.out.println("Bandera agregada" + columna + "," + fila);
-                                // Agregar la casilla al arreglo banderas
-                                banderas[fila][columna] = true;
+
+                                if (contadorTurno >= 0) {
+                                    contadorTurno++;
+                                    //System.out.println(contadorTurno);
+                                }
+                                if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
+                                    bonus.setBackground(backgroundG);
+                                }
+                                if (contadorTurno < 2) {
+                                    bonus.setBackground(backgroundR);
+                                }
+
+                                if (buscaminas.listaSeg.getSize() > 0) {
+                                    Node temp = buscaminas.listaSeg.head;
+                                    buscaminas.listaSeg.removeFNode();
+
+                                    buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
+                                    if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+
+                                        System.out.println("Bot gano");
+                                    } else {
+                                        System.out.println("Bot perdio");
+                                    }
+                                } else {
+
+                                    Node temp = buscaminas.listaInc.removeNode();
+
+                                    buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
+                                    buscaminas.listaInc.clear();
+                                    if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
+
+                                        System.out.println("Bot gano");
+                                    } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
+                                        System.out.println("Bot perdio");
+                                    }
+                                }
+
+                                turno = 1;
+
+                            }
+                        }
+                    } else if (cantJug == 2) {
+
+                        if (turno == 1) {
+                            if (event.getCode() == KeyCode.K) {
+
+                                if (banderas[fila][columna]) {
+                                    banderas[fila][columna] = false;
+                                } else {
+                                    System.out.println("Bandera agregada" + columna + "," + fila);
+                                    // Agregar la casilla al arreglo banderas
+                                    banderas[fila][columna] = true;
+                                }
+
+                            }
+                            if (event.getCode() == KeyCode.UP) {
+                                // Lógica para mover hacia arriba
+                                actualizarPuntero(fila, columna);
+                                filaPuntero--;
+                                actualizarPuntero(filaPuntero, columna);
+
+                                casilla.setBackground(null);
+                            }
+                            if (event.getCode() == KeyCode.DOWN) {
+                                // Lógica para mover hacia abajo
+                                actualizarPuntero(fila, columna);
+                                filaPuntero++;
+                                actualizarPuntero(filaPuntero, columna);
+
+                                casilla.setBackground(null);
+                            }
+                            if (event.getCode() == KeyCode.LEFT) {
+                                actualizarPuntero(fila, columna);
+                                columnaPuntero--;
+                                actualizarPuntero(fila, columnaPuntero);
+                                
+
+                                casilla.setBackground(null);
+                            }
+                            if (event.getCode() == KeyCode.RIGHT) {
+                                actualizarPuntero(fila, columna);
+                                columnaPuntero++;
+                                actualizarPuntero(fila, columnaPuntero);
+
+                                casilla.setBackground(null);
                             }
 
-                        }
-                        if (event.getButton() == MouseButton.PRIMARY) {
-                            
-                            {
+                            if (event.getCode() == KeyCode.SPACE) {
+
+                                System.out.println("Fila" + fila + "columna" + columna);
+                                buscaminas.listaInc.clear();
+
                                 if (buscaminas.tableroVisible[fila][columna] == 8) {
                                     if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
                                         bonus.setBackground(backgroundG);
@@ -228,96 +358,13 @@ public class BuscaminasFX extends Application {
                                     }
                                 }
                             }
-                        }
-                    } else {
 
-                        if (contadorTurno >= 0) {
-                            contadorTurno++;
-                            //System.out.println(contadorTurno);
-                        }
-                        if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
-                            bonus.setBackground(backgroundG);
-                        }
-                        if (contadorTurno < 2) {
-                            bonus.setBackground(backgroundR);
-                        }
-
-                        if (buscaminas.listaSeg.getSize() > 0) {
-                            Node temp = buscaminas.listaSeg.head;
-                            buscaminas.listaSeg.removeFNode();
-
-                            buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
-                            if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
-
-                                System.out.println("Bot gano");
-                            } else {
-                                System.out.println("Bot perdio");
-                            }
                         } else {
-                            
+                            if (event.getCode() == KeyCode.B){
                             Node temp = buscaminas.listaInc.removeNode();
 
                             buscaminas.descubrirCasilla(temp.j - 1, temp.i - 1);
-                            buscaminas.listaInc.clear();
-                            if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
 
-                                System.out.println("Bot gano");
-                            } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
-                                System.out.println("Bot perdio");
-                            }
-                        }
-
-                        turno = 1;
-
-                    }}
-                    
-                    else if(cantJug==2){
-                        
-                    
-                    if (turno == 1) {
-                        if (event.getButton() == MouseButton.SECONDARY) {
-                            
-                            if (banderas[fila][columna]) {
-                                banderas[fila][columna] = false;
-                            } else {
-                                System.out.println("Bandera agregada" + columna + "," + fila);
-                                // Agregar la casilla al arreglo banderas
-                                banderas[fila][columna] = true;
-                            }
-
-                        }
-                        if (event.getButton() == MouseButton.PRIMARY) {
-                            buscaminas.listaInc.clear();
-                            {
-                                if (buscaminas.tableroVisible[fila][columna] == 8) {
-                                    if (contadorTurno >= 2 && buscaminas.listaSeg.getSize() > 0) {
-                                        bonus.setBackground(backgroundG);
-                                    }
-                                    if (contadorTurno < 2) {
-                                        bonus.setBackground(backgroundR);
-                                    }
-                                    if (buscaminas.listaSeg.contains(columna + 1, fila + 1)) {
-                                        buscaminas.listaSeg.removeNode(columna + 1, fila + 1);
-
-                                    }
-                                    buscaminas.descubrirCasilla(fila, columna);
-                                    turno = 2;
-                                    if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
-
-                                        System.out.println("Jugador gano");
-                                    } else if (buscaminas.juegoTerminado && !buscaminas.haGanado()) {
-                                        System.out.println("Jugador perdio");
-                                    }
-                                }
-                            }
-                        }
-                    } 
-                         else {
-                            
-                            Node temp = buscaminas.listaInc.removeNode();
-
-                            buscaminas.descubrirCasilla(temp.j-1, temp.i-1);
-                           
                             if (buscaminas.juegoTerminado && buscaminas.haGanado()) {
 
                                 System.out.println("Bot gano");
@@ -325,9 +372,7 @@ public class BuscaminasFX extends Application {
                                 System.out.println("Bot perdio");
                             }
                             turno = 1;
-                        }
-
-                        
+                        }}
 
                     }
 
@@ -338,7 +383,9 @@ public class BuscaminasFX extends Application {
                     buscaminas.casillaSeg(fila, columna);
                     buscaminas.agregarListInc(fila, columna);
                     //buscaminas.casillaPorcentaje(fila, columna);
+                    buscaminas.listaProb.clear();
                     buscaminas.casillaSeg2(fila, columna);
+                    //buscaminas.listaProb.clear();
                     //buscaminas.agregarListInc(fila, columna);
                     //buscaminas.casillaNSeg(fila, columna);
 
@@ -346,7 +393,8 @@ public class BuscaminasFX extends Application {
                     if (buscaminas.juegoTerminado) {
                         mostrarMensajeFinal();
                     }
-                });
+                }
+                );
 
                 casilla.setShape(rect);
                 casilla.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
@@ -360,10 +408,19 @@ public class BuscaminasFX extends Application {
         }
 
         Scene scene = new Scene(pane, 400, 400);
-        primaryStage.setTitle("Buscaminas");
+
+        primaryStage.setTitle(
+                "Buscaminas");
         primaryStage.setScene(scene);
+
         primaryStage.show();
+
         buscaminas.colocarMinas();
+    }
+
+    public void actualizarPuntero(int fila, int columna) {
+        puntero.setLayoutX((columna * 40)+40);
+        puntero.setLayoutY((fila * 40)+63);
     }
 
     public void iniciarContador() {
@@ -403,7 +460,7 @@ public class BuscaminasFX extends Application {
         for (int i = 0; i < nFilas; i++) {
             for (int j = 0; j < nColumnas; j++) {
                 Button casilla = casillas[i][j];
-                
+
                 if (!buscaminas.visible[i][j]) {
                     if (banderas[i][j]) {
                         casilla.setBackground(backgroundB);
@@ -469,7 +526,7 @@ public class BuscaminasFX extends Application {
 
                     }
                 } else {
-                    
+
                     casilla.setText("");
                 }
             }
