@@ -1,3 +1,8 @@
+
+import java.util.HashMap;
+import java.util.Map;
+import javafx.util.Pair;
+
 public class ProbList {
     NodeProb head;
     int size;
@@ -101,6 +106,42 @@ public void removeNode(int i, int j, double label) {
 
         return removedNode;
     }
+    public void updateMaxLabels() {
+    Map<Pair<Integer, Integer>, Double> maxLabels = new HashMap<>();
+
+    // Obtener los valores máximos para cada par (x,y)
+    NodeProb current = head;
+    while (current != null) {
+        Pair<Integer, Integer> key = new Pair<>(current.i, current.j);
+        double currentLabel = current.label;
+
+        if (maxLabels.containsKey(key)) {
+            double maxLabel = maxLabels.get(key);
+            if (currentLabel > maxLabel) {
+                maxLabels.put(key, currentLabel);
+            }
+        } else {
+            maxLabels.put(key, currentLabel);
+        }
+
+        current = current.next;
+    }
+
+    // Eliminar nodos con etiquetas menores
+    current = head;
+    while (current != null) {
+        Pair<Integer, Integer> key = new Pair<>(current.i, current.j);
+        double maxLabel = maxLabels.get(key);
+
+        if (current.label < maxLabel) {
+            System.out.println("Nodo eliminadoooooooo: "+current.i+"," +current.j+","+ current.label);
+            removeNode(current.i, current.j, current.label);
+        }
+
+        current = current.next;
+    }
+}
+
     public void clear() {
     head = null;
     size = 0;

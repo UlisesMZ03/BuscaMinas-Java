@@ -1,6 +1,8 @@
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -23,6 +25,12 @@ public class BuscaminasF extends Application {
 
         // Crear el hilo para actualizar las propiedades variable1Property y variable2Property de ArduinoReceiver
         ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
+        Button enviarSenalButton = new Button("Enviar señal");
+        enviarSenalButton.setOnAction(event -> {
+            arduinoReceiver.enviarSenal("1"); // Reemplaza esto con la señal que deseas enviar
+
+        });
+        root.getChildren().addAll(enviarSenalButton);
         Thread thread = new Thread(() -> {
             while (true) {
                 try {

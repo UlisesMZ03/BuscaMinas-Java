@@ -8,10 +8,10 @@ class ArduinoReceiver {
 
     private SimpleIntegerProperty variableY = new SimpleIntegerProperty();
     private SimpleIntegerProperty variableX = new SimpleIntegerProperty();
-
+SerialPort port;
     public ArduinoReceiver() {
         // Configurar el puerto serie
-        SerialPort port = SerialPort.getCommPort("COM6"); // Cambiar a tu puerto Arduino
+        port = SerialPort.getCommPort("COM6"); // Cambiar a tu puerto Arduino
         port.openPort();
         port.setBaudRate(9600); // Configurar la velocidad del puerto serie según la configuración de Arduino
         port.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 100, 0); // Configurar los tiempos de espera
@@ -21,6 +21,7 @@ class ArduinoReceiver {
             while (true) {
                 byte[] buffer = new byte[1024];
                 int numRead = port.readBytes(buffer, buffer.length);
+                
                 if (numRead > 0) {
                     String receivedData = new String(buffer, 0, numRead);
                     Matcher matcher = Pattern.compile("\\d+").matcher(receivedData);
@@ -55,6 +56,12 @@ class ArduinoReceiver {
         thread.setDaemon(true);
         thread.start();
     }
+    public void setVariableY(int value) {
+        variableY.set(value);
+    }
+    public void setVariableX(int value) {
+        variableX.set(value);
+    }
 
     public SimpleIntegerProperty variableProperty() {
         return variableY;
@@ -63,4 +70,9 @@ class ArduinoReceiver {
     public SimpleIntegerProperty variable2XProperty() {
         return variableX;
     }
+    public void enviarSenal(String senal) {
+    port.writeBytes(senal.getBytes(), senal.length());
+        System.out.println("Señal enviada");
+}
+
 }
