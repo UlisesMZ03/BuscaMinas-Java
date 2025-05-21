@@ -1,6 +1,42 @@
-# BuscaMinas Java
- Este repositorio contiene el código fuente de un juego de buscaminas desarrollado en Java, con una interfaz gráfica de usuario personalizada y una funcionalidad de inteligencia artificial para elegir sabiamente las celdas a ser abiertas. El juego cuenta con tres modos de juego diferentes y una opción para jugar contra la computadora, la cual se ha programado para jugar de manera inteligente.  Además de las características mencionadas anteriormente, el juego también cuenta con:  
- 1. Funcionalidad de agregar banderas a las celdas para identificar posibles minas Integración con hardware de Arduino para proporcionar una experiencia de juego más inmersiva y única 
- 2. Sonidos personalizados y efectos visuales para una experiencia de juego más inmersiva.
- 3. El código del juego ha sido diseñado de manera modular para facilitar la personalización y la agregación de nuevas funcionalidades en el futuro. Con esta descripción actualizada, los usuarios tendrán una mejor idea de la experiencia de juego que ofrece el repositorio. 
- 4. Además, se menciona la integración con hardware de Arduino para destacar una funcionalidad única y emocionante que podría llamar la atención de los usuarios.
+### 💣 Buscaminas en Java (con interfaz FX + Arduino)
+
+<p align="center">
+  <img width="300" src="https://i.imgur.com/IJUQK9Q.png" alt="Buscaminas JavaFX">
+</p>
+
+**Buscaminas recreado desde cero con Java y JavaFX**, incluye interfaz gráfica moderna, sonidos personalizados y compatibilidad con Arduino para control físico del juego.
+
+> Perfecto para proyectos universitarios o como demostración de habilidades en interfaces, estructuras de datos y hardware.
+
+---
+
+### 🚀 ¿Cómo iniciar?
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/tuusuario/BuscaMinas-Java.git
+
+# Abrir en NetBeans o cualquier IDE que soporte JavaFX
+# Ejecutar BuscaminasFX.java
+```
+
+> Asegúrate de tener Java 8+ y JavaFX configurado correctamente en tu entorno.
+
+---
+
+### 🔧 Características
+
+- 🎮 Interfaz visual JavaFX moderna
+- 🧠 Lógica de juego con estructuras dinámicas
+- 🕹️ Soporte opcional para Arduino vía RXTX
+- 🔊 Efectos de sonido al interactuar
+- 🖼️ Tutoriales visuales integrados
+- 💡 Estructura clara y modular
+
+---
+
+### 🧩 Recursos adicionales
+- [📦 Librería RXTX](https://github.com/Fazecast/jSerialComm)
+- [📘 JavaFX Docs](https://openjfx.io/)
+- [🔌 Arduino + Java Tutorial](https://playground.arduino.cc/interfacing/java/)
+- [🎥 Video JavaFX Game Demo](https://www.youtube.com/watch?v=Z1v3KHKVw8M)
